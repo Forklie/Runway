@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+.kotlin/
+.idea/
+.agents/
+skills-lock.json
+firebase-debug.log

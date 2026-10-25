@@ -1,0 +1,17 @@
+{
+  "indexes": [
+    { "collectionGroup": "transactions", "queryScope": "COLLECTION",
+      "fields": [ { "fieldPath": "monthKey", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "DESCENDING" } ] },
+    { "collectionGroup": "transactions", "queryScope": "COLLECTION",
+      "fields": [ { "fieldPath": "type", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "DESCENDING" } ] },
+    { "collectionGroup": "milestones", "queryScope": "COLLECTION",
+      "fields": [ { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "dueDate", "order": "ASCENDING" } ] },
+    { "collectionGroup": "recurringItems", "queryScope": "COLLECTION",
+      "fields": [ { "fieldPath": "active", "order": "ASCENDING" },
+        { "fieldPath": "nextDueDate", "order": "ASCENDING" } ] }
+  ],
+  "fieldOverrides": []
+}

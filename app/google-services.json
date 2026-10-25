@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "895299238828-tdtt06hc0ek2ugv17u2f40gor16n1okl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.runway",
+            "certificate_hash": "6c36d2070d77efc85ce005dd0c667468a5b70c1f"
+          }
+        },
+        {
           "client_id": "895299238828-d4er8dsqpjodnte1tt6l785qdn5b5hu0.apps.googleusercontent.com",
           "client_type": 3
         }

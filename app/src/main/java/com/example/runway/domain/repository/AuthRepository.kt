@@ -15,5 +15,13 @@ interface AuthRepository {
 
     suspend fun sendPasswordReset(email: String): AppResult<Unit>
     suspend fun signInWithGoogle(idToken: String): AppResult<AuthUser>
+
+    /**
+     * Repair for a signed-in user whose users/{uid} doc is missing (app killed between sign-up and
+     * the seed batch, or a first Google sign-in). Asks the SERVER once and seeds only if the doc is
+     * really missing. Fails with Network when offline, so a cached "missing" never overwrites data.
+     */
+    suspend fun ensureProfile(): AppResult<Unit>
+
     fun signOut()
 }

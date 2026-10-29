@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.runway.R
+import com.example.runway.ui.feature.auth.authScreens
 
 /**
  * MERGE HOTSPOT (owner: B). One line per feature graph, nothing else.
@@ -17,14 +18,15 @@ import com.example.runway.R
 fun AppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: Any = HomeDest, // Day 2: SessionViewModel picks Login / Onboarding / Home
+    startDestination: Any = HomeDest, // RunwayShell passes the route SessionViewModel picked
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        // B: auth, onboarding, settings, subscriptions (Day 2+)
+        // B: auth (Day 2). Onboarding, settings and subscriptions are added here later.
+        authScreens(navController)
 
         // A: replace with activityScreens(navController). Income, Transfer and Quick Add also live here.
         composable<ActivityDest> { PlaceholderScreen(R.string.nav_activity) }

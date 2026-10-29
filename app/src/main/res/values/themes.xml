@@ -3,4 +3,11 @@
     <style name="Theme.Runway" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/rw_bg</item>
     </style>
+
+    <!-- Shown by the system splash screen until SessionViewModel knows where to send the user. -->
+    <style name="Theme.Runway.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/rw_bg</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.Runway</item>
+    </style>
 </resources>

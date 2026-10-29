@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared by the three auth screens -->
+    <string name="auth_back">Back</string>
+    <string name="auth_email_label">Email</string>
+    <string name="auth_email_placeholder">you@example.com</string>
+    <string name="auth_password_label">Password</string>
+    <string name="auth_name_label">What should we call you?</string>
+
+    <!-- Word-chip lockups -->
+    <string name="lockup_welcome">welcome</string>
+    <string name="lockup_back">back</string>
+    <string name="lockup_hi">hi</string>
+    <string name="lockup_there">there</string>
+    <string name="lockup_no">no</string>
+    <string name="lockup_worries">worries</string>
+
+    <!-- Login -->
+    <string name="auth_login_title">Sign in</string>
+    <string name="auth_login_subtitle">Your numbers are right where you left them.</string>
+    <string name="auth_login_action">Sign in</string>
+    <string name="auth_forgot_action">Forgot password?</string>
+    <string name="auth_login_to_register">Create an account</string>
+
+    <!-- Register -->
+    <string name="auth_register_title">Create your account</string>
+    <string name="auth_register_subtitle">It takes a minute. Next you\'ll set your goal.</string>
+    <string name="auth_register_action">Create account</string>
+    <string name="auth_register_to_login">I already have an account</string>
+    <string name="auth_password_helper">At least 6 characters.</string>
+
+    <!-- Reset -->
+    <string name="auth_reset_title">Reset your password</string>
+    <string name="auth_reset_subtitle">Enter your email and we\'ll send a link to choose a new one.</string>
+    <string name="auth_reset_action">Send reset link</string>
+    <string name="auth_reset_back_to_login">Back to sign in</string>
+    <string name="auth_reset_sent_title">If that email exists, a reset link is on its way.</string>
+    <string name="auth_reset_sent_body">Check your inbox and your spam folder.</string>
+
+    <!-- Field messages (inline, under the field) -->
+    <string name="auth_error_email_empty">Enter your email address.</string>
+    <string name="auth_error_email_invalid">That doesn\'t look like an email address.</string>
+    <string name="auth_error_password_empty">Enter your password.</string>
+    <string name="auth_error_name_empty">Add a name so we can say hi.</string>
+</resources>

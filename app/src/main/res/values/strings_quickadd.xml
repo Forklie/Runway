@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quickadd_title">Add expense</string>
+    <string name="quickadd_amount">Amount</string>
+    <string name="quickadd_category">Category</string>
+    <string name="quickadd_more_categories">More</string>
+    <string name="quickadd_kind_committed">Committed: it happens whatever the mood</string>
+    <string name="quickadd_kind_discretionary">Discretionary: your choice</string>
+    <string name="quickadd_more_options">More options</string>
+    <string name="quickadd_note">Note</string>
+    <string name="quickadd_date">Date</string>
+    <string name="quickadd_today">Today</string>
+    <string name="quickadd_date_confirm">Use this date</string>
+    <string name="quickadd_date_cancel">Keep it</string>
+    <string name="quickadd_account">Paid from</string>
+    <string name="quickadd_save">Save</string>
+    <string name="quickadd_saved">%1$s on %2$s</string>
+    <string name="quickadd_undo">Undo</string>
+    <string name="quickadd_empty">Your categories haven\'t reached this phone yet. Connect once and they\'ll appear here.</string>
+</resources>

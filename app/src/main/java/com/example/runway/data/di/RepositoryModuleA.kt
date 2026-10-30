@@ -1,8 +1,10 @@
 package com.example.runway.data.di
 
 import com.example.runway.data.repository.CategoryRepositoryImpl
+import com.example.runway.data.repository.FreelanceRepositoryImpl
 import com.example.runway.data.repository.IncomeSourceRepositoryImpl
 import com.example.runway.domain.repository.CategoryRepository
+import com.example.runway.domain.repository.FreelanceRepository
 import com.example.runway.domain.repository.IncomeSourceRepository
 import dagger.Binds
 import dagger.Module
@@ -23,4 +25,7 @@ abstract class RepositoryModuleA {
 
     @Binds
     abstract fun incomeSourceRepository(impl: IncomeSourceRepositoryImpl): IncomeSourceRepository
+
+    @Binds
+    abstract fun freelanceRepository(impl: FreelanceRepositoryImpl): FreelanceRepository
 }

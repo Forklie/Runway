@@ -12,8 +12,10 @@ import com.example.runway.core.time.TimeProvider
 import com.example.runway.domain.model.Account
 import com.example.runway.domain.model.AccountKind
 import com.example.runway.domain.model.CurrencyCode
+import com.example.runway.domain.model.DefaultIncomeSourceIds
 import com.example.runway.domain.model.IncomeSource
 import com.example.runway.domain.model.IncomeSourceKind
+import com.example.runway.domain.model.Reliability
 import com.example.runway.domain.model.TransactionType
 import com.example.runway.domain.repository.AccountRepository
 import com.example.runway.domain.repository.IncomeSourceRepository
@@ -49,6 +51,19 @@ data class IncomeOptions(
     val goalFundId: String?,
     val pyfPercent: Double,
     val lastUsdRate: Double?,
+    val unsavedSourceIds: Set<String> = emptySet(), // offered, but no document yet: written on first use
+)
+
+/**
+ * Onboarding only stores the sources ticked there. Every kind stays on offer here, so skipping AdSense in
+ * onboarding never blocks logging it later (BR-42). Same ids as onboarding, so nothing is duplicated.
+ */
+private val defaultSources = listOf(
+    IncomeSource(DefaultIncomeSourceIds.SALARY, "Salary", IncomeSourceKind.SALARY, CurrencyCode.LKR, Reliability.RELIABLE, 0L, null, null),
+    IncomeSource(DefaultIncomeSourceIds.FREELANCE, "Freelance", IncomeSourceKind.FREELANCE, CurrencyCode.LKR, Reliability.VARIABLE, 0L, null, null),
+    IncomeSource(DefaultIncomeSourceIds.ADSENSE, "AdSense", IncomeSourceKind.ADSENSE, CurrencyCode.USD, Reliability.VARIABLE, 0L, null, null),
+    IncomeSource(DefaultIncomeSourceIds.CRYPTO, "Crypto", IncomeSourceKind.CRYPTO, CurrencyCode.LKR, Reliability.VARIABLE, 0L, null, null),
+    IncomeSource(DefaultIncomeSourceIds.OTHER, "Other income", IncomeSourceKind.OTHER, CurrencyCode.LKR, Reliability.VARIABLE, 0L, null, null),
 )
 
 /** Typed input as Strings, validated on Save. Null selections mean "the default" from [IncomeOptions]. */
@@ -94,7 +109,7 @@ fun IncomeOptions.offersPyf(form: IncomeForm): Boolean =
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class LogIncomeViewModel @Inject constructor(
-    sources: IncomeSourceRepository,
+    private val sources: IncomeSourceRepository,
     accounts: AccountRepository,
     profile: UserProfileRepository,
     private val logIncome: LogIncome,
@@ -108,15 +123,17 @@ class LogIncomeViewModel @Inject constructor(
         .flatMapLatest {
             combine(sources.observeSources(), accounts.observeAccounts(), profile.observeProfile()) { allSources, allAccounts, userProfile ->
                 val spendable = allAccounts.filter { it.kind != AccountKind.GOAL_FUND }
+                val unsaved = defaultSources.filter { default -> allSources.none { it.id == default.id } }
                 val options = IncomeOptions(
-                    sources = allSources,
+                    sources = allSources + unsaved,
                     accounts = spendable,
                     defaultAccountId = userProfile?.defaultAccountId?.takeIf { id -> spendable.any { it.id == id } } ?: spendable.firstOrNull()?.id,
                     goalFundId = allAccounts.firstOrNull { it.kind == AccountKind.GOAL_FUND }?.id,
                     pyfPercent = userProfile?.pyfPercent ?: 0.0,
                     lastUsdRate = userProfile?.lastFxRates?.get(CurrencyCode.USD.name),
+                    unsavedSourceIds = unsaved.map { it.id }.toSet(),
                 )
-                if (allSources.isEmpty()) UiState.Empty else UiState.Success(options)
+                UiState.Success(options)
             }
                 .onStart<UiState<IncomeOptions>> { emit(UiState.Loading) }
                 .catch { emit(UiState.Error(it.toAppError())) }
@@ -203,7 +220,10 @@ class LogIncomeViewModel @Inject constructor(
                 goalFundId = options.goalFundId.takeIf { pyf },
             )
             when (result) {
-                is AppResult.Success -> _done.send(Unit)
+                is AppResult.Success -> {
+                    if (source.id in options.unsavedSourceIds) sources.add(source)
+                    _done.send(Unit)
+                }
                 is AppResult.Failure -> update { it.copy(saving = false, formError = result.error) }
             }
         }

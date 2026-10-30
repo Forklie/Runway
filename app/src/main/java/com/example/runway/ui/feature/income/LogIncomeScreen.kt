@@ -53,6 +53,7 @@ import com.example.runway.ui.components.SmallTopBar
 import com.example.runway.ui.components.dayMonthLabel
 import com.example.runway.ui.components.messageRes
 import com.example.runway.ui.components.problemLockup
+import com.example.runway.ui.feature.settings.toPercentText
 import com.example.runway.ui.state.UiState
 import com.example.runway.ui.theme.Dimens
 import com.example.runway.ui.theme.RunwayTheme
@@ -112,14 +113,7 @@ fun LogIncomeScreen(options: UiState<IncomeOptions>, form: IncomeForm, today: Lo
     ) {
         SmallTopBar(title = stringResource(R.string.income_title), onBack = actions.onBack)
         when (options) {
-            UiState.Loading -> LoadingState()
-            UiState.Empty -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                EmptyState(
-                    lockup = problemLockup(),
-                    title = stringResource(R.string.income_empty_title),
-                    body = stringResource(R.string.income_empty_body),
-                )
-            }
+            UiState.Loading, UiState.Empty -> LoadingState()
             is UiState.Error -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 EmptyState(
                     lockup = problemLockup(),
@@ -271,7 +265,7 @@ private fun PyfRow(options: IncomeOptions, form: IncomeForm, currency: CurrencyC
                 text = if (share != null) {
                     stringResource(R.string.income_pyf_amount, share.formatLkr())
                 } else {
-                    stringResource(R.string.income_pyf_helper, options.pyfPercent.toString())
+                    stringResource(R.string.income_pyf_helper, options.pyfPercent.toPercentText())
                 },
                 style = RunwayType.bodySm,
                 color = c.inkMuted,

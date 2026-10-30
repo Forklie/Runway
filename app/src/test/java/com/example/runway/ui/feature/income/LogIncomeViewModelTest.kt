@@ -64,6 +64,7 @@ class LogIncomeViewModelTest {
     @Before
     fun setUp() {
         every { sources.observeSources() } returns flowOf(listOf(salary, adsense))
+        coEvery { sources.add(any()) } returns AppResult.Success(Unit)
         every { accounts.observeAccounts() } returns flowOf(listOf(account("fund", AccountKind.GOAL_FUND), account("bank")))
         every { profile.observeProfile() } returns flowOf(userProfile())
         coEvery { profile.setLastFxRate(any(), any()) } returns AppResult.Success(Unit)
@@ -162,6 +163,29 @@ class LogIncomeViewModelTest {
         vm.onSave()
         assertEquals(1, batches.size)
         assertEquals("2026-10", batches.single().single().monthKey)
+    }
+
+    @Test
+    fun `a source skipped in onboarding is still offered, and stored the first time it is used (BR-42)`() = runTest {
+        every { sources.observeSources() } returns flowOf(listOf(salary))
+        val vm = viewModel()
+        val offered = (vm.options.value as UiState.Success).data
+        assertEquals(listOf("salary", "freelance", "adsense", "crypto", "other-income"), offered.sources.map { it.id })
+
+        vm.onSourceChange("adsense")
+        assertEquals(CurrencyCode.USD, offered.currencyFor(vm.form.value))
+        vm.onRateChange("305")
+        vm.onAmountChange("120")
+        vm.onSave()
+        coVerify { sources.add(match { it.id == "adsense" && it.currency == CurrencyCode.USD }) }
+    }
+
+    @Test
+    fun `a source that is already stored is not written again`() = runTest {
+        val vm = viewModel()
+        vm.onAmountChange("100")
+        vm.onSave()
+        coVerify(exactly = 0) { sources.add(match { it.id == "salary" }) }
     }
 
     @Test

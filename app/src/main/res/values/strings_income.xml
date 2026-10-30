@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="income_title">Log income</string>
+    <string name="income_source">Where from</string>
+    <string name="income_currency">Currency</string>
+    <string name="income_amount">Amount</string>
+    <string name="income_rate_mode">What do you know?</string>
+    <string name="income_mode_rate">The rate</string>
+    <string name="income_mode_received">The LKR received</string>
+    <string name="income_rate">LKR for 1 USD</string>
+    <string name="income_rate_error">Enter a rate above 0.</string>
+    <string name="income_received">LKR received</string>
+    <string name="income_worked_out">%1$s at %2$s. This rate stays with this entry.</string>
+    <string name="income_account">Paid into</string>
+    <string name="income_pyf">Pay Yourself First</string>
+    <string name="income_pyf_amount">%1$s goes to your goal fund, in the same step.</string>
+    <string name="income_pyf_helper">%1$s%% goes to your goal fund, in the same step.</string>
+    <string name="income_date">Date</string>
+    <string name="income_today">Today</string>
+    <string name="income_note">Note</string>
+    <string name="income_save">Save income</string>
+    <string name="income_empty_title">No income sources yet</string>
+    <string name="income_empty_body">Your sources appear here once onboarding has reached this phone.</string>
+</resources>

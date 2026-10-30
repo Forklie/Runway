@@ -10,6 +10,7 @@ import com.example.runway.ui.feature.auth.authScreens
 import com.example.runway.ui.feature.checkin.checkinScreens
 import com.example.runway.ui.feature.goal.goalScreens
 import com.example.runway.ui.feature.home.homeScreens
+import com.example.runway.ui.feature.income.incomeScreens
 import com.example.runway.ui.feature.insights.insightsScreens
 import com.example.runway.ui.feature.onboarding.onboardingScreens
 import com.example.runway.ui.feature.settings.settingsScreens
@@ -40,6 +41,7 @@ fun AppNavHost(
 
         // A: replace with activityScreens(navController). Income, Transfer and Quick Add also live here.
         composable<ActivityDest> { PlaceholderScreen(R.string.nav_activity) }
+        incomeScreens(navController)
 
         // C: replace with homeScreens, goalScreens and insightsScreens
         homeScreens(navController)

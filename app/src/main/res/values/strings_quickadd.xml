@@ -10,8 +10,6 @@
     <string name="quickadd_note">Note</string>
     <string name="quickadd_date">Date</string>
     <string name="quickadd_today">Today</string>
-    <string name="quickadd_date_confirm">Use this date</string>
-    <string name="quickadd_date_cancel">Keep it</string>
     <string name="quickadd_account">Paid from</string>
     <string name="quickadd_save">Save</string>
     <string name="quickadd_saved">%1$s on %2$s</string>

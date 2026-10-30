@@ -10,14 +10,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ExpandMore
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,6 +41,7 @@ import com.example.runway.ui.components.ButtonStyle
 import com.example.runway.ui.components.CategoryChip
 import com.example.runway.ui.components.LoadingState
 import com.example.runway.ui.components.RunwayButton
+import com.example.runway.ui.components.RunwayDatePicker
 import com.example.runway.ui.components.RunwaySheet
 import com.example.runway.ui.components.RunwayTextField
 import com.example.runway.ui.components.categoryIcon
@@ -58,7 +54,6 @@ import com.example.runway.ui.theme.RunwayType
 import com.example.runway.ui.theme.Spacing
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneOffset
 import kotlinx.coroutines.launch
 
 /**
@@ -241,53 +236,15 @@ private fun MoreOptions(options: QuickAddOptions, form: QuickAddForm, today: Loc
         }
     }
     if (pickingDate) {
-        PastDatePicker(
+        RunwayDatePicker(
             selected = form.date ?: today,
-            today = today,
+            latest = today,
             onPick = {
                 actions.onDateChange(it)
                 pickingDate = false
             },
             onDismiss = { pickingDate = false },
         )
-    }
-}
-
-/** Material's picker works in UTC midnights whatever the phone's zone, so the conversion stays in UTC. */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun PastDatePicker(selected: LocalDate, today: LocalDate, onPick: (LocalDate) -> Unit, onDismiss: () -> Unit) {
-    val todayMillis = today.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-    val state = rememberDatePickerState(
-        initialSelectedDateMillis = selected.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli(),
-        selectableDates = object : SelectableDates {
-            override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis <= todayMillis
-        },
-    )
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            RunwayButton(
-                text = stringResource(R.string.quickadd_date_confirm),
-                onClick = {
-                    state.selectedDateMillis
-                        ?.let { Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate() }
-                        ?.let(onPick) ?: onDismiss()
-                },
-                style = ButtonStyle.Tertiary,
-                size = ButtonSize.Small,
-            )
-        },
-        dismissButton = {
-            RunwayButton(
-                text = stringResource(R.string.quickadd_date_cancel),
-                onClick = onDismiss,
-                style = ButtonStyle.Tertiary,
-                size = ButtonSize.Small,
-            )
-        },
-    ) {
-        DatePicker(state = state)
     }
 }
 

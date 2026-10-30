@@ -13,10 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.TrendingUp
-import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.material.icons.rounded.SwapHoriz
@@ -39,9 +37,6 @@ import androidx.compose.ui.unit.dp
 import com.example.runway.R
 import com.example.runway.core.money.formatAmount
 import com.example.runway.core.money.formatLkr
-import com.example.runway.core.money.spokenAmount
-import com.example.runway.domain.model.Transaction
-import com.example.runway.domain.model.TransactionType
 import com.example.runway.domain.usecase.GoalProjection
 import com.example.runway.domain.usecase.HomePrompt
 import com.example.runway.domain.usecase.HomeSummary
@@ -60,7 +55,7 @@ import com.example.runway.ui.components.HeroPanel
 import com.example.runway.ui.components.HowItWorks
 import com.example.runway.ui.components.InitialKeycap
 import com.example.runway.ui.components.LockupWord
-import com.example.runway.ui.components.MoneyKind
+import com.example.runway.ui.components.LedgerRow
 import com.example.runway.ui.components.MoneyText
 import com.example.runway.ui.components.RunwayButton
 import com.example.runway.ui.components.RunwayCard
@@ -68,7 +63,6 @@ import com.example.runway.ui.components.SectionHeader
 import com.example.runway.ui.components.SquiggleText
 import com.example.runway.ui.components.StatusTag
 import com.example.runway.ui.components.TagTone
-import com.example.runway.ui.components.TransactionRow
 import com.example.runway.ui.components.WordShape
 import com.example.runway.ui.components.categoryIcon
 import com.example.runway.ui.components.charts.BarItem
@@ -81,7 +75,6 @@ import com.example.runway.ui.components.dayMonthSpoken
 import com.example.runway.ui.components.monthYearLabel
 import com.example.runway.ui.components.monthYearSpoken
 import com.example.runway.ui.components.shortDayLabel
-import com.example.runway.ui.components.timeLabel
 import com.example.runway.ui.components.weekdayLabel
 import com.example.runway.ui.feature.goal.projectionLine
 import com.example.runway.ui.theme.Dimens
@@ -406,7 +399,7 @@ internal fun TodaySection(summary: HomeSummary, actions: HomeActions) {
                         if (index > 0) {
                             Box(Modifier.padding(start = 72.dp).fillMaxWidth().height(Dimens.hairline).background(c.line))
                         }
-                        HomeTransactionRow(tx, summary)
+                        LedgerRow(tx, summary.categoriesById, summary.accountsById, summary.sourcesById, summary.zone)
                     }
                 }
             }
@@ -419,64 +412,6 @@ internal fun TodaySection(summary: HomeSummary, actions: HomeActions) {
             size = ButtonSize.Small,
         )
     }
-}
-
-/** Maps one transaction to the design system's list row: who, what, where, when. */
-@Composable
-private fun HomeTransactionRow(tx: Transaction, summary: HomeSummary) {
-    val category = tx.categoryId?.let(summary.categoriesById::get)
-    val account = tx.accountId?.let(summary.accountsById::get)
-    val time = tx.date.timeLabel(summary.zone)
-    val uncategorised = stringResource(R.string.home_uncategorised)
-    val transferLabel = stringResource(R.string.tx_caption_transfer)
-    val refundLabel = stringResource(R.string.tx_caption_refund)
-
-    val title: String
-    val details: List<String>
-    val icon: ImageVector
-    val kind: MoneyKind
-    var caption: String? = null
-    when (tx.type) {
-        TransactionType.EXPENSE -> {
-            title = tx.note.ifBlank { category?.name ?: uncategorised }
-            details = listOfNotNull(category?.name, account?.name, time)
-            icon = categoryIcon(category?.iconKey)
-            kind = MoneyKind.Expense
-        }
-        TransactionType.INCOME -> {
-            val source = tx.incomeSourceId?.let(summary.sourcesById::get)
-            title = tx.note.ifBlank { source?.name ?: stringResource(R.string.home_row_income) }
-            details = listOfNotNull(source?.name, account?.name, time)
-            icon = Icons.Rounded.Payments
-            kind = MoneyKind.Income
-        }
-        TransactionType.TRANSFER -> {
-            val to = tx.toAccountId?.let(summary.accountsById::get)
-            title = tx.note.ifBlank { transferLabel }
-            details = listOf(stringResource(R.string.home_row_transfer_between, account?.name.orEmpty(), to?.name.orEmpty()), time)
-            icon = Icons.Rounded.SwapHoriz
-            kind = MoneyKind.Plain
-            caption = transferLabel
-        }
-        TransactionType.REFUND -> {
-            title = tx.note.ifBlank { category?.name ?: refundLabel }
-            details = listOfNotNull(category?.name, account?.name, time)
-            icon = Icons.AutoMirrored.Rounded.Undo
-            kind = MoneyKind.Income
-            caption = refundLabel
-        }
-    }
-    val subtitle = details.joinToString(" · ")
-    TransactionRow(
-        title = title,
-        subtitle = subtitle,
-        amountMinor = tx.amountLkrMinor,
-        kind = kind,
-        icon = icon,
-        spoken = listOf(title, spokenAmount(tx.amountLkrMinor, expense = tx.type == TransactionType.EXPENSE), subtitle)
-            .joinToString(", "),
-        caption = caption,
-    )
 }
 
 @Composable

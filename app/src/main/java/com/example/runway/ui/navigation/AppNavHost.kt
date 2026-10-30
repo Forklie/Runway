@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.runway.R
 import com.example.runway.ui.feature.auth.authScreens
 import com.example.runway.ui.feature.checkin.checkinScreens
+import com.example.runway.ui.feature.freelance.freelanceScreens
 import com.example.runway.ui.feature.goal.goalScreens
 import com.example.runway.ui.feature.home.homeScreens
 import com.example.runway.ui.feature.insights.insightsScreens
@@ -40,6 +41,7 @@ fun AppNavHost(
 
         // A: replace with activityScreens(navController). Income, Transfer and Quick Add also live here.
         composable<ActivityDest> { PlaceholderScreen(R.string.nav_activity) }
+        freelanceScreens(navController)
 
         // C: replace with homeScreens, goalScreens and insightsScreens
         homeScreens(navController)

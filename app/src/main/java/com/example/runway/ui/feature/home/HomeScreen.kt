@@ -48,7 +48,9 @@ data class HomeActions(
     val onCheckin: (() -> Unit)? = null,
     val onIncome: (() -> Unit)? = null,
     val onTransfer: (() -> Unit)? = null,
+    val onFreelance: (() -> Unit)? = null,
     val onSettings: (() -> Unit)? = null,
+    val overdueCard: (@Composable () -> Unit)? = null, // A's overdue invoices (BR-53); draws nothing when none are overdue
 )
 
 /** Stateful wrapper: the only part that touches Hilt. */
@@ -112,6 +114,7 @@ private fun HomeContent(summary: HomeSummary, actions: HomeActions) {
                     PromptCard(prompt, onCheckin, Modifier.padding(horizontal = Dimens.screenMargin).padding(top = Spacing.s6))
                 }
             }
+            actions.overdueCard?.let { card -> item(key = "overdue") { card() } }
             item(key = "goal") {
                 val topGap = if (prompt != null) Spacing.s3 else Spacing.s6
                 Box(Modifier.padding(horizontal = Dimens.screenMargin).padding(top = topGap)) {

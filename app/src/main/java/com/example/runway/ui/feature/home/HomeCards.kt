@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.material.icons.rounded.SwapHoriz
+import androidx.compose.material.icons.rounded.Work
 import androidx.compose.material.icons.rounded.Sync
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -154,7 +155,8 @@ internal fun ActionRow(actions: HomeActions) {
     val income = actions.onIncome
     val transfer = actions.onTransfer
     val checkin = actions.onCheckin
-    if (income == null && transfer == null && checkin == null) return
+    val freelance = actions.onFreelance
+    if (income == null && transfer == null && checkin == null && freelance == null) return
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = Dimens.screenMargin).padding(top = Spacing.s4),
         horizontalArrangement = Arrangement.spacedBy(Spacing.s2),
@@ -170,6 +172,7 @@ internal fun ActionRow(actions: HomeActions) {
             )
         }
         if (transfer != null) SquareIconButton(Icons.Rounded.SwapHoriz, stringResource(R.string.home_action_transfer), transfer)
+        if (freelance != null) SquareIconButton(Icons.Rounded.Work, stringResource(R.string.freelance_title), freelance)
         if (checkin != null) {
             RunwayButton(
                 text = stringResource(R.string.home_action_checkin),

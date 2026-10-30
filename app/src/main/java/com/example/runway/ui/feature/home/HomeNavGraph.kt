@@ -4,6 +4,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.runway.ui.feature.checkin.openCheckin
+import com.example.runway.ui.feature.freelance.OverdueMilestonesCard
+import com.example.runway.ui.feature.freelance.openFreelance
+import com.example.runway.ui.feature.freelance.openProject
 import com.example.runway.ui.feature.settings.SettingsDest
 import com.example.runway.ui.navigation.ActivityDest
 import com.example.runway.ui.navigation.GoalDest
@@ -21,7 +24,9 @@ fun NavGraphBuilder.homeScreens(nav: NavController) {
                 onOpenGoal = { nav.navigateTopLevel(GoalDest) },
                 onSeeActivity = { nav.navigateTopLevel(ActivityDest) },
                 onCheckin = { nav.openCheckin() },
+                onFreelance = { nav.openFreelance() },
                 onSettings = { nav.navigate(SettingsDest) { launchSingleTop = true } },
+                overdueCard = { OverdueMilestonesCard(onOpenProject = { nav.openProject(it) }) },
             ),
         )
     }

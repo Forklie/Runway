@@ -20,9 +20,9 @@ Rewritten on 2026-11-03 against `develop` at `8b713dd`. C already merged A's dat
 |---|---|
 | Labs 04 and 05 | Explained in the TDD as Compose equivalents: hoisted form state with inline validation for Data Binding, `LazyColumn` with the Firestore offline cache for RecyclerView and Room. No Room code. |
 | Quick Add | `RunwaySheet` shown by `RunwayShell`. Its ViewModel is activity scoped, so it outlives the sheet for Undo. |
-| Income, freelance | Activity top bar has "Log income" plus an overflow menu with Transfer and Freelance. |
+| Income, transfer, freelance | Buttons in Home's action row, using the `HomeActions` hooks C left. Each branch is based on `develop` and has to work alone, and Activity does not exist there. |
 | Refund | Started from an expense's detail screen. Sets `relatedTxId`. |
-| Transfer and ATM | Started from Activity. ATM is a transfer with the Cash account preselected. |
+| Transfer and ATM | Built with Activity. ATM is the default: first bank account to Cash. |
 | Crypto | C built it in PR #24. Off this list unless the team says otherwise. |
 
 ## PRs, in order
@@ -39,14 +39,14 @@ Cut from the bottom when time runs out.
 - Month list grouped by day with sticky headers. Previous and next month via `MonthKey`. Client-side category filter.
 - `Transaction.withAmount(minor, now)`: an edit keeps the original rate (BR-05), with a test for AT-22.
 - Detail screen: edit, archive, and refund (amount no larger than the original). AT-16.
+- Transfer and ATM screen (BR-13). AT-15.
 - `activityScreens(nav)` replaces the placeholder in `AppNavHost`.
 
 ### 3. `a-income` (F-09, F-15)
 - Fix first: `TransactionDraft.fxRate` defaults to 1.0, so USD with no rate saves as 1 USD = 1 LKR. `AddTransaction` must reject it.
 - Log income: pick a source, LKR or USD, enter the rate or the LKR received. Store the last rate with `setLastFxRate`.
 - Salary turns on PYF: income plus a transfer to the goal fund, one `addAll` batch at `pyfPercent`.
-- Transfer and ATM screen (BR-13).
-- AT-07, AT-08, AT-15.
+- AT-07, AT-08.
 
 ### 4. `a-freelance` (F-14)
 - Nothing exists yet. Add `FreelanceProject`, `Milestone` (+ `isOverdue(today)`), DTOs, mappers, `FreelanceRepository` with a `markPaid` batch, binding in `RepositoryModuleA`.
@@ -62,6 +62,7 @@ Cut from the bottom when time runs out.
 ## Skipped (add if time allows)
 - UI for adding custom categories (FR-09). Only the seed for now.
 - Snooze on the overdue card (BR-53). It needs a new field.
+- USD on mark paid. Freelance income is LKR there; a USD client goes through Log income.
 - Currency in Quick Add. Expenses are LKR. USD goes through Log income.
 
 ## Open

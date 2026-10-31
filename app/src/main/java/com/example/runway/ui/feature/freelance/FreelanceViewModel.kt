@@ -3,6 +3,8 @@ package com.example.runway.ui.feature.freelance
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.runway.core.event.AppEvent
+import com.example.runway.core.event.AppEvents
 import com.example.runway.core.money.MoneyParser
 import com.example.runway.core.result.AppError
 import com.example.runway.core.result.AppResult
@@ -26,7 +28,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -43,11 +44,15 @@ data class ProjectDetail(
     val milestones: List<Milestone>,
     val accounts: List<Account>,
     val today: LocalDate,
-    val overdueIds: Set<String>,
     val zone: ZoneId,
 )
 
 data class OverdueItem(val milestone: Milestone, val project: FreelanceProject)
+
+/** A failed write reaches the person through the shell's snackbar, like one the server refused. */
+private fun report(result: AppResult<Unit>) {
+    if (result is AppResult.Failure) AppEvents.emit(AppEvent.WriteRejected)
+}
 
 private fun List<Milestone>.sumOf(status: MilestoneStatus) = filter { it.status == status }.sumOf { it.amountMinor }
 
@@ -59,9 +64,6 @@ class FreelanceViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val retryTick = MutableStateFlow(0)
-
-    private val _error = MutableStateFlow<AppError?>(null)
-    val error: StateFlow<AppError?> = _error.asStateFlow()
 
     val uiState: StateFlow<UiState<List<ProjectSummary>>> = retryTick
         .flatMapLatest {
@@ -89,9 +91,7 @@ class FreelanceViewModel @Inject constructor(
         val amount = MoneyParser.parseToMinor(total)
         if (client.isBlank() || title.isBlank() || amount == null) return false
         val project = FreelanceProject(UUID.randomUUID().toString(), client.trim(), title.trim(), amount, time.now(), false)
-        viewModelScope.launch {
-            (freelance.saveProject(project) as? AppResult.Failure)?.let { _error.value = it.error }
-        }
+        viewModelScope.launch { report(freelance.saveProject(project)) }
         return true
     }
 }
@@ -108,9 +108,6 @@ class ProjectViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val projectId: String = savedState[KEY_PROJECT_ID] ?: ""
-
-    private val _error = MutableStateFlow<AppError?>(null)
-    val error: StateFlow<AppError?> = _error.asStateFlow()
 
     val uiState: StateFlow<UiState<ProjectDetail>> = combine(
         freelance.observeProjects(),
@@ -130,7 +127,6 @@ class ProjectViewModel @Inject constructor(
                     milestones = own,
                     accounts = allAccounts.filter { it.kind != AccountKind.GOAL_FUND },
                     today = time.today(),
-                    overdueIds = own.filter { it.isOverdue(time.today(), time.zone) }.map { it.id }.toSet(),
                     zone = time.zone,
                 ),
             )
@@ -170,9 +166,7 @@ class ProjectViewModel @Inject constructor(
     }
 
     private fun write(block: suspend () -> AppResult<Unit>) {
-        viewModelScope.launch {
-            (block() as? AppResult.Failure)?.let { _error.value = it.error }
-        }
+        viewModelScope.launch { report(block()) }
     }
 
     private companion object {

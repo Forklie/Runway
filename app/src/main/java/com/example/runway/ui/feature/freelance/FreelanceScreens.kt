@@ -32,7 +32,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.runway.R
 import com.example.runway.core.money.MoneyParser
 import com.example.runway.core.money.formatLkr
-import com.example.runway.core.result.AppError
 import com.example.runway.domain.model.Account
 import com.example.runway.domain.model.FreelanceProject
 import com.example.runway.domain.model.Milestone
@@ -44,6 +43,7 @@ import com.example.runway.ui.components.CardTitle
 import com.example.runway.ui.components.CardTone
 import com.example.runway.ui.components.CategoryChip
 import com.example.runway.ui.components.EmptyState
+import com.example.runway.ui.components.ErrorState
 import com.example.runway.ui.components.LoadingState
 import com.example.runway.ui.components.RunwayButton
 import com.example.runway.ui.components.RunwayCard
@@ -54,8 +54,6 @@ import com.example.runway.ui.components.SmallTopBar
 import com.example.runway.ui.components.StatusTag
 import com.example.runway.ui.components.TagTone
 import com.example.runway.ui.components.dayMonthLabel
-import com.example.runway.ui.components.messageRes
-import com.example.runway.ui.components.problemLockup
 import com.example.runway.ui.feature.home.nothingYetLockup
 import com.example.runway.ui.state.UiState
 import com.example.runway.ui.theme.Dimens
@@ -72,14 +70,12 @@ import java.time.ZoneId
 @Composable
 fun FreelanceRoute(onBack: () -> Unit, onOpen: (String) -> Unit, viewModel: FreelanceViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val error by viewModel.error.collectAsStateWithLifecycle()
-    FreelanceScreen(state, error, onBack, onOpen, viewModel::retry, viewModel::onAddProject)
+    FreelanceScreen(state, onBack, onOpen, viewModel::retry, viewModel::onAddProject)
 }
 
 @Composable
 fun FreelanceScreen(
     state: UiState<List<ProjectSummary>>,
-    error: AppError?,
     onBack: () -> Unit,
     onOpen: (String) -> Unit,
     onRetry: () -> Unit,
@@ -97,10 +93,9 @@ fun FreelanceScreen(
                 }
             },
         )
-        ErrorLine(error)
         when (state) {
             UiState.Loading -> LoadingState()
-            UiState.Empty -> Centred {
+            UiState.Empty -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 EmptyState(
                     lockup = nothingYetLockup(),
                     title = stringResource(R.string.freelance_empty_title),
@@ -109,15 +104,7 @@ fun FreelanceScreen(
                     onAction = { adding = true },
                 )
             }
-            is UiState.Error -> Centred {
-                EmptyState(
-                    lockup = problemLockup(),
-                    title = stringResource(R.string.error_title),
-                    body = stringResource(state.error.messageRes()),
-                    actionLabel = stringResource(R.string.action_retry),
-                    onAction = onRetry,
-                )
-            }
+            is UiState.Error -> ErrorState(state.error, stringResource(R.string.action_retry), onRetry)
             is UiState.Success -> LazyColumn(
                 contentPadding = PaddingValues(horizontal = Dimens.screenMargin, vertical = Spacing.s2),
                 verticalArrangement = Arrangement.spacedBy(Spacing.s3),
@@ -195,14 +182,12 @@ private fun AddProjectSheet(onDismiss: () -> Unit, onSave: (String, String, Stri
 @Composable
 fun ProjectRoute(onBack: () -> Unit, viewModel: ProjectViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val error by viewModel.error.collectAsStateWithLifecycle()
-    ProjectScreen(state, error, onBack, viewModel::onAddMilestone, viewModel::onInvoice, viewModel::onMarkPaid)
+    ProjectScreen(state, onBack, viewModel::onAddMilestone, viewModel::onInvoice, viewModel::onMarkPaid)
 }
 
 @Composable
 fun ProjectScreen(
     state: UiState<ProjectDetail>,
-    error: AppError?,
     onBack: () -> Unit,
     onAddMilestone: (String, String) -> Boolean,
     onInvoice: (Milestone, LocalDate) -> Unit,
@@ -226,12 +211,11 @@ fun ProjectScreen(
                 }
             },
         )
-        ErrorLine(error)
         when (state) {
             is UiState.Success -> {
                 val data = state.data
                 if (data.milestones.isEmpty()) {
-                    Centred {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         EmptyState(
                             lockup = nothingYetLockup(),
                             title = stringResource(R.string.freelance_no_milestones_title),
@@ -248,7 +232,7 @@ fun ProjectScreen(
                         items(data.milestones, key = { it.id }) { milestone ->
                             MilestoneCard(
                                 milestone = milestone,
-                                overdue = milestone.id in data.overdueIds,
+                                overdue = milestone.isOverdue(data.today, data.zone),
                                 zone = data.zone,
                                 onInvoice = { invoicingId = milestone.id },
                                 onMarkPaid = { payingId = milestone.id },
@@ -257,15 +241,7 @@ fun ProjectScreen(
                     }
                 }
             }
-            is UiState.Error -> Centred {
-                EmptyState(
-                    lockup = problemLockup(),
-                    title = stringResource(R.string.error_title),
-                    body = stringResource(state.error.messageRes()),
-                    actionLabel = stringResource(R.string.ui_back),
-                    onAction = onBack,
-                )
-            }
+            is UiState.Error -> ErrorState(state.error, stringResource(R.string.ui_back), onBack)
             else -> LoadingState()
         }
     }
@@ -273,7 +249,7 @@ fun ProjectScreen(
     if (adding) AddMilestoneSheet(onDismiss = { adding = false }, onSave = onAddMilestone)
     detail?.milestones?.firstOrNull { it.id == invoicingId }?.let { milestone ->
         RunwayDatePicker(
-            selected = detail.today.plusDays(DEFAULT_DUE_DAYS),
+            selected = detail.today.plusDays(30),
             onPick = {
                 onInvoice(milestone, it)
                 invoicingId = null
@@ -413,31 +389,12 @@ fun OverdueMilestonesCard(onOpenProject: (String) -> Unit, viewModel: OverdueVie
     }
 }
 
-@Composable
-private fun ErrorLine(error: AppError?) {
-    if (error != null) {
-        Text(
-            stringResource(error.messageRes()),
-            style = RunwayType.bodySm,
-            color = RunwayTheme.colors.danger,
-            modifier = Modifier.padding(horizontal = Dimens.screenMargin),
-        )
-    }
-}
-
-@Composable
-private fun Centred(content: @Composable () -> Unit) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { content() }
-}
-
-private const val DEFAULT_DUE_DAYS = 30L
-
 @Preview(showBackground = true, heightDp = 500)
 @Composable
 private fun FreelancePreview() {
     val project = FreelanceProject("p", "Lanka Tea", "Website", 15_000_000, Instant.EPOCH, false)
     RunwayTheme {
-        FreelanceScreen(UiState.Success(listOf(ProjectSummary(project, 5_000_000, 5_000_000, 1))), null, {}, {}, {}, { _, _, _ -> true })
+        FreelanceScreen(UiState.Success(listOf(ProjectSummary(project, 5_000_000, 5_000_000, 1))), {}, {}, {}, { _, _, _ -> true })
     }
 }
 
@@ -452,8 +409,8 @@ private fun ProjectPreview() {
     )
     RunwayTheme {
         ProjectScreen(
-            UiState.Success(ProjectDetail(project, milestones, emptyList(), LocalDate.of(2026, 11, 4), setOf("2"), ZoneId.of("Asia/Colombo"))),
-            null, {}, { _, _ -> true }, { _, _ -> }, { _, _, _, _ -> true },
+            UiState.Success(ProjectDetail(project, milestones, emptyList(), LocalDate.of(2026, 11, 4), ZoneId.of("Asia/Colombo"))),
+            {}, { _, _ -> true }, { _, _ -> }, { _, _, _, _ -> true },
         )
     }
 }

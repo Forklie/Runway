@@ -2,7 +2,6 @@ package com.example.runway.ui.feature.income
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -44,7 +43,7 @@ import com.example.runway.ui.components.AmountField
 import com.example.runway.ui.components.ButtonSize
 import com.example.runway.ui.components.ButtonStyle
 import com.example.runway.ui.components.CategoryChip
-import com.example.runway.ui.components.EmptyState
+import com.example.runway.ui.components.ErrorState
 import com.example.runway.ui.components.LoadingState
 import com.example.runway.ui.components.RunwayButton
 import com.example.runway.ui.components.RunwayDatePicker
@@ -52,7 +51,6 @@ import com.example.runway.ui.components.RunwayTextField
 import com.example.runway.ui.components.SmallTopBar
 import com.example.runway.ui.components.dayMonthLabel
 import com.example.runway.ui.components.messageRes
-import com.example.runway.ui.components.problemLockup
 import com.example.runway.ui.feature.settings.toPercentText
 import com.example.runway.ui.state.UiState
 import com.example.runway.ui.theme.Dimens
@@ -72,7 +70,6 @@ data class LogIncomeActions(
     val onReceivedChange: (String) -> Unit = {},
     val onAccountChange: (String) -> Unit = {},
     val onDateChange: (LocalDate) -> Unit = {},
-    val onNoteChange: (String) -> Unit = {},
     val onPyfChange: (Boolean) -> Unit = {},
     val onSave: () -> Unit = {},
 )
@@ -97,7 +94,6 @@ fun LogIncomeRoute(onDone: () -> Unit, viewModel: LogIncomeViewModel = hiltViewM
             onReceivedChange = viewModel::onReceivedChange,
             onAccountChange = viewModel::onAccountChange,
             onDateChange = viewModel::onDateChange,
-            onNoteChange = viewModel::onNoteChange,
             onPyfChange = viewModel::onPyfChange,
             onSave = viewModel::onSave,
         ),
@@ -114,15 +110,7 @@ fun LogIncomeScreen(options: UiState<IncomeOptions>, form: IncomeForm, today: Lo
         SmallTopBar(title = stringResource(R.string.income_title), onBack = actions.onBack)
         when (options) {
             UiState.Loading, UiState.Empty -> LoadingState()
-            is UiState.Error -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                EmptyState(
-                    lockup = problemLockup(),
-                    title = stringResource(R.string.error_title),
-                    body = stringResource(options.error.messageRes()),
-                    actionLabel = stringResource(R.string.action_retry),
-                    onAction = actions.onRetry,
-                )
-            }
+            is UiState.Error -> ErrorState(options.error, stringResource(R.string.action_retry), actions.onRetry)
             is UiState.Success -> IncomeFields(options.data, form, today, actions)
         }
     }
@@ -183,7 +171,6 @@ private fun ColumnScope.IncomeFields(
                 size = ButtonSize.Small,
             )
         }
-        RunwayTextField(value = form.note, onValueChange = actions.onNoteChange, label = stringResource(R.string.income_note))
         form.formError?.let { Text(stringResource(it.messageRes()), style = RunwayType.bodySm, color = c.danger) }
     }
     RunwayButton(

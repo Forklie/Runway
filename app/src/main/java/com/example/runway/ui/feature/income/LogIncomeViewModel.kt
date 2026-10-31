@@ -20,7 +20,6 @@ import com.example.runway.domain.model.TransactionType
 import com.example.runway.domain.repository.AccountRepository
 import com.example.runway.domain.repository.IncomeSourceRepository
 import com.example.runway.domain.repository.UserProfileRepository
-import com.example.runway.domain.usecase.AddTransaction
 import com.example.runway.domain.usecase.LogIncome
 import com.example.runway.domain.usecase.TransactionDraft
 import com.example.runway.ui.state.UiState
@@ -76,7 +75,6 @@ data class IncomeForm(
     val received: String = "",
     val accountId: String? = null,
     val date: LocalDate? = null,  // null means today
-    val note: String = "",
     val pyfOn: Boolean = true,
     val amountError: Boolean = false,
     val rateError: Boolean = false,
@@ -150,7 +148,6 @@ class LogIncomeViewModel @Inject constructor(
             received = savedState[KEY_RECEIVED] ?: "",
             accountId = savedState[KEY_ACCOUNT],
             date = savedState.get<String>(KEY_DATE)?.let(LocalDate::parse),
-            note = savedState[KEY_NOTE] ?: "",
             pyfOn = savedState[KEY_PYF] ?: true,
         ),
     )
@@ -184,8 +181,6 @@ class LogIncomeViewModel @Inject constructor(
     /** Back-dating is fine, a future date is not (BR-18). */
     fun onDateChange(date: LocalDate) = update { it.copy(date = date.takeIf { d -> d < today }) }
 
-    fun onNoteChange(value: String) = update { it.copy(note = value.take(AddTransaction.MAX_NOTE)) }
-
     fun onPyfChange(on: Boolean) = update { it.copy(pyfOn = on) }
 
     fun onSave() {
@@ -211,7 +206,6 @@ class LogIncomeViewModel @Inject constructor(
                 fxRate = rate,
                 accountId = form.accountId ?: options.defaultAccountId,
                 incomeSourceId = source.id,
-                note = form.note,
             )
             val pyf = options.offersPyf(form) && form.pyfOn
             val result = logIncome(
@@ -240,7 +234,6 @@ class LogIncomeViewModel @Inject constructor(
         savedState[KEY_RECEIVED] = next.received
         savedState[KEY_ACCOUNT] = next.accountId
         savedState[KEY_DATE] = next.date?.toString()
-        savedState[KEY_NOTE] = next.note
         savedState[KEY_PYF] = next.pyfOn
     }
 
@@ -253,7 +246,6 @@ class LogIncomeViewModel @Inject constructor(
         const val KEY_RECEIVED = "income_received"
         const val KEY_ACCOUNT = "income_account"
         const val KEY_DATE = "income_date"
-        const val KEY_NOTE = "income_note"
         const val KEY_PYF = "income_pyf"
         const val KEY_ID = "income_id"
     }

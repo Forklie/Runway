@@ -17,6 +17,5 @@
     <string name="income_pyf_helper">%1$s%% goes to your goal fund, in the same step.</string>
     <string name="income_date">Date</string>
     <string name="income_today">Today</string>
-    <string name="income_note">Note</string>
     <string name="income_save">Save income</string>
 </resources>

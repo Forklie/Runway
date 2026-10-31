@@ -2,10 +2,7 @@ package com.example.runway.ui.feature.activity
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -28,14 +25,12 @@ import com.example.runway.domain.model.Account
 import com.example.runway.domain.model.AccountKind
 import com.example.runway.ui.components.AmountField
 import com.example.runway.ui.components.ButtonSize
-import com.example.runway.ui.components.CategoryChip
-import com.example.runway.ui.components.EmptyState
+import com.example.runway.ui.components.ChipGroup
 import com.example.runway.ui.components.ErrorState
 import com.example.runway.ui.components.LoadingState
 import com.example.runway.ui.components.RunwayButton
 import com.example.runway.ui.components.SmallTopBar
 import com.example.runway.ui.components.messageRes
-import com.example.runway.ui.components.problemLockup
 import com.example.runway.ui.state.UiState
 import com.example.runway.ui.theme.Dimens
 import com.example.runway.ui.theme.RunwayTheme
@@ -74,14 +69,7 @@ fun TransferScreen(
     Column(Modifier.fillMaxSize().background(c.bg).imePadding(), horizontalAlignment = Alignment.CenterHorizontally) {
         SmallTopBar(title = stringResource(R.string.transfer_title), onBack = onBack)
         when (accounts) {
-            UiState.Loading -> LoadingState()
-            UiState.Empty -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                EmptyState(
-                    lockup = problemLockup(),
-                    title = stringResource(R.string.transfer_empty_title),
-                    body = stringResource(R.string.transfer_empty_body),
-                )
-            }
+            UiState.Loading, UiState.Empty -> LoadingState()
             is UiState.Error -> ErrorState(accounts.error, stringResource(R.string.ui_back), onBack)
             is UiState.Success -> {
                 val (fromId, toId) = selected(form, accounts.data)
@@ -102,8 +90,8 @@ fun TransferScreen(
                         errorText = if (form.amountError) stringResource(R.string.amount_error_invalid) else null,
                         enabled = !form.saving,
                     )
-                    AccountChips(stringResource(R.string.transfer_from), accounts.data.filter { it.id != toId }, fromId, onFromChange)
-                    AccountChips(stringResource(R.string.transfer_to), accounts.data.filter { it.id != fromId }, toId, onToChange)
+                    ChipGroup(stringResource(R.string.transfer_from), accounts.data.filter { it.id != toId }.map { it.id to it.name }, fromId, onFromChange)
+                    ChipGroup(stringResource(R.string.transfer_to), accounts.data.filter { it.id != fromId }.map { it.id to it.name }, toId, onToChange)
                     Text(stringResource(R.string.transfer_helper), style = RunwayType.bodySm, color = c.inkMuted)
                     form.formError?.let { Text(stringResource(it.messageRes()), style = RunwayType.bodySm, color = c.danger) }
                 }
@@ -118,19 +106,6 @@ fun TransferScreen(
                     fillWidth = true,
                     loading = form.saving,
                 )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun AccountChips(label: String, accounts: List<Account>, selectedId: String?, onSelect: (String) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-        Text(label, style = RunwayType.label, color = RunwayTheme.colors.ink)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s2), verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-            accounts.forEach { account ->
-                CategoryChip(label = account.name, selected = account.id == selectedId, onClick = { onSelect(account.id) })
             }
         }
     }

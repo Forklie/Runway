@@ -3,8 +3,6 @@ package com.example.runway.ui.feature.activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,11 +35,11 @@ import com.example.runway.domain.model.TransactionType
 import com.example.runway.ui.components.AmountField
 import com.example.runway.ui.components.ButtonSize
 import com.example.runway.ui.components.ButtonStyle
-import com.example.runway.ui.components.CategoryChip
+import com.example.runway.ui.components.ChipGroup
+import com.example.runway.ui.components.DateField
 import com.example.runway.ui.components.ErrorState
 import com.example.runway.ui.components.LoadingState
 import com.example.runway.ui.components.RunwayButton
-import com.example.runway.ui.components.RunwayDatePicker
 import com.example.runway.ui.components.RunwaySheet
 import com.example.runway.ui.components.RunwayTextField
 import com.example.runway.ui.components.SmallTopBar
@@ -107,12 +105,10 @@ fun TransactionDetailScreen(state: UiState<DetailContent>, form: DetailForm, tod
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DetailForm(content: DetailContent, form: DetailForm, today: LocalDate, actions: DetailActions) {
     val c = RunwayTheme.colors
     val tx = content.tx
-    var pickingDate by rememberSaveable { mutableStateOf(false) }
     var confirmingArchive by rememberSaveable { mutableStateOf(false) }
 
     Column(
@@ -137,32 +133,21 @@ private fun DetailForm(content: DetailContent, form: DetailForm, today: LocalDat
             errorText = if (form.amountError) stringResource(R.string.amount_error_invalid) else null,
         )
         if (tx.type == TransactionType.EXPENSE && content.categories.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-                Text(stringResource(R.string.activity_category), style = RunwayType.label, color = c.ink)
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(Spacing.s2),
-                    verticalArrangement = Arrangement.spacedBy(Spacing.s2),
-                ) {
-                    content.categories.forEach { category ->
-                        CategoryChip(
-                            label = category.name,
-                            selected = form.categoryId == category.id,
-                            onClick = { actions.onCategoryChange(category.id) },
-                        )
-                    }
-                }
-            }
-        }
-        RunwayTextField(value = form.note, onValueChange = actions.onNoteChange, label = stringResource(R.string.activity_note))
-        Column(verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-            Text(stringResource(R.string.activity_date), style = RunwayType.label, color = c.ink)
-            RunwayButton(
-                text = (form.date ?: today).dayMonthLabel(),
-                onClick = { pickingDate = true },
-                style = ButtonStyle.Secondary,
-                size = ButtonSize.Small,
+            ChipGroup(
+                label = stringResource(R.string.activity_category),
+                choices = content.categories.map { it.id to it.name },
+                selected = form.categoryId,
+                onSelect = actions.onCategoryChange,
             )
         }
+        RunwayTextField(value = form.note, onValueChange = actions.onNoteChange, label = stringResource(R.string.activity_note))
+        DateField(
+            label = stringResource(R.string.activity_date),
+            text = (form.date ?: today).dayMonthLabel(),
+            selected = form.date ?: today,
+            latest = today,
+            onPick = actions.onDateChange,
+        )
         form.formError?.let { Text(stringResource(it.messageRes()), style = RunwayType.bodySm, color = c.danger) }
         RunwayButton(
             text = stringResource(R.string.activity_save),
@@ -188,17 +173,6 @@ private fun DetailForm(content: DetailContent, form: DetailForm, today: LocalDat
         }
     }
 
-    if (pickingDate) {
-        RunwayDatePicker(
-            selected = form.date ?: today,
-            latest = today,
-            onPick = {
-                actions.onDateChange(it)
-                pickingDate = false
-            },
-            onDismiss = { pickingDate = false },
-        )
-    }
     if (confirmingArchive) {
         AlertDialog(
             onDismissRequest = { confirmingArchive = false },

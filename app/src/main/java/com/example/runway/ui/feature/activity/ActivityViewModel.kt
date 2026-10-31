@@ -86,9 +86,7 @@ class ActivityViewModel @Inject constructor(
         savedState[KEY_CATEGORY] = id
     }
 
-    fun retry() {
-        retryTick.update { it + 1 }
-    }
+    fun retry() = retryTick.update { it + 1 }
 
     private fun moveTo(key: String?) {
         if (key == null) return

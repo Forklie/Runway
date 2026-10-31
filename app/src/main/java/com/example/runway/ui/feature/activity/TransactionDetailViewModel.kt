@@ -26,11 +26,14 @@ import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -60,10 +63,7 @@ class TransactionDetailViewModel @Inject constructor(
     private val savedState: SavedStateHandle,
 ) : ViewModel() {
 
-    private val id: String = savedState[KEY_ID] ?: ""
-
-    private val _uiState = MutableStateFlow<UiState<DetailContent>>(UiState.Loading)
-    val uiState: StateFlow<UiState<DetailContent>> = _uiState.asStateFlow()
+    private val id: String = savedState["id"] ?: "" // the route's argument name (TransactionDetailDest.id)
 
     private val _form = MutableStateFlow(
         DetailForm(
@@ -83,18 +83,14 @@ class TransactionDetailViewModel @Inject constructor(
 
     val today: LocalDate get() = time.today()
 
-    init {
-        viewModelScope.launch {
-            combine(transactions.observeById(id), categories.observeCategories()) { tx, all ->
-                if (tx == null || tx.archived) UiState.Error(AppError.NotFound) else UiState.Success(DetailContent(tx, all))
-            }
-                .catch { emit(UiState.Error(it.toAppError())) }
-                .collect { state ->
-                    (state as? UiState.Success)?.data?.tx?.let(::fillOnce)
-                    _uiState.value = state
-                }
+    // Declared after the form: Eagerly starts at once, and the first emission fills it.
+    val uiState: StateFlow<UiState<DetailContent>> =
+        combine(transactions.observeById(id), categories.observeCategories()) { tx, all ->
+            if (tx == null || tx.archived) UiState.Error(AppError.NotFound) else UiState.Success(DetailContent(tx, all))
         }
-    }
+            .onEach { state -> (state as? UiState.Success)?.data?.tx?.let(::fillOnce) }
+            .catch { emit(UiState.Error(it.toAppError())) }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, UiState.Loading)
 
     /** First load only: the listener re-emits, and a re-emit must not overwrite what is being typed. */
     private fun fillOnce(tx: Transaction) {
@@ -118,7 +114,7 @@ class TransactionDetailViewModel @Inject constructor(
     fun onDateChange(date: LocalDate) = update { it.copy(date = date.takeIf { d -> d <= today } ?: it.date) }
 
     fun onSave() {
-        val tx = (_uiState.value as? UiState.Success)?.data?.tx ?: return
+        val tx = (uiState.value as? UiState.Success)?.data?.tx ?: return
         val form = _form.value
         val amount = MoneyParser.parseToMinor(form.amount)
         if (amount == null || FxMath.toLkrMinor(amount, tx.fxRate) !in 1..AddTransaction.MAX_MINOR) {
@@ -140,10 +136,7 @@ class TransactionDetailViewModel @Inject constructor(
     /** Archived, never deleted (BR-16): it leaves every total and every list. */
     fun onArchive() = finish { transactions.archive(id) }
 
-    fun onRefundOpen() {
-        if (savedState.get<String>(KEY_REFUND_ID) == null) savedState[KEY_REFUND_ID] = UUID.randomUUID().toString()
-        update { it.copy(refund = "", refundError = false) }
-    }
+    fun onRefundOpen() = update { it.copy(refund = "", refundError = false) }
 
     fun onRefundDismiss() = update { it.copy(refund = null, refundError = false) }
 
@@ -155,8 +148,7 @@ class TransactionDetailViewModel @Inject constructor(
      * relatedTxId rows here if partial refunds become common.
      */
     fun onRefundSave() {
-        val tx = (_uiState.value as? UiState.Success)?.data?.tx ?: return
-        val refundId = savedState.get<String>(KEY_REFUND_ID) ?: return
+        val tx = (uiState.value as? UiState.Success)?.data?.tx ?: return
         val amount = MoneyParser.parseToMinor(_form.value.refund.orEmpty())
         if (tx.type != TransactionType.EXPENSE || amount == null || amount > tx.amountLkrMinor) {
             update { it.copy(refundError = true) }
@@ -165,7 +157,7 @@ class TransactionDetailViewModel @Inject constructor(
         finish {
             val written = addTransaction(
                 TransactionDraft(
-                    id = refundId,
+                    id = UUID.randomUUID().toString(), // finish() lets one write through
                     type = TransactionType.REFUND,
                     amountMinor = amount,
                     date = time.now(),
@@ -203,12 +195,10 @@ class TransactionDetailViewModel @Inject constructor(
     }
 
     private companion object {
-        const val KEY_ID = "id" // the route's argument name (TransactionDetailDest.id)
         const val KEY_AMOUNT = "detail_amount"
         const val KEY_CATEGORY = "detail_category"
         const val KEY_NOTE = "detail_note"
         const val KEY_DATE = "detail_date"
         const val KEY_REFUND = "detail_refund"
-        const val KEY_REFUND_ID = "detail_refund_id"
     }
 }

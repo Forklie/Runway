@@ -50,7 +50,7 @@ class TransferViewModel @Inject constructor(
 ) : ViewModel() {
 
     val accounts: StateFlow<UiState<List<Account>>> = accounts.observeAccounts()
-        .map<List<Account>, UiState<List<Account>>> { if (it.size < 2) UiState.Empty else UiState.Success(it) }
+        .map<List<Account>, UiState<List<Account>>> { UiState.Success(it) }
         .onStart { emit(UiState.Loading) }
         .catch { emit(UiState.Error(it.toAppError())) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), UiState.Loading)

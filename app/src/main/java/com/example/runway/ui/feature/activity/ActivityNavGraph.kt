@@ -22,8 +22,3 @@ fun NavGraphBuilder.activityScreens(nav: NavController) {
         TransferRoute(onDone = { nav.popBackStack() })
     }
 }
-
-/** Opens Transfer from Home's action row. */
-fun NavController.openTransfer() {
-    navigate(TransferDest) { launchSingleTop = true }
-}

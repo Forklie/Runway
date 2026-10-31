@@ -29,6 +29,4 @@
     <string name="transfer_to">To</string>
     <string name="transfer_helper">A transfer just moves money, so it isn\'t spending. An ATM withdrawal is your bank to Cash.</string>
     <string name="transfer_save">Save transfer</string>
-    <string name="transfer_empty_title">One account so far</string>
-    <string name="transfer_empty_body">A transfer needs two accounts.</string>
 </resources>

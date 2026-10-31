@@ -200,13 +200,14 @@ private fun DetailForm(content: DetailContent, form: DetailForm, today: LocalDat
         )
     }
     form.refund?.let { refund ->
+        val original = tx.amountLkrMinor.formatLkr(cents = tx.amountLkrMinor % 100 != 0L)
         RunwaySheet(title = stringResource(R.string.activity_refund_title), onDismiss = actions.onRefundDismiss) {
             AmountField(
                 value = refund,
                 onValueChange = actions.onRefundChange,
                 label = stringResource(R.string.activity_amount),
-                helperText = stringResource(R.string.activity_refund_helper, tx.amountLkrMinor.formatLkr()),
-                errorText = if (form.refundError) stringResource(R.string.activity_refund_error, tx.amountLkrMinor.formatLkr()) else null,
+                helperText = stringResource(R.string.activity_refund_helper, original),
+                errorText = if (form.refundError) stringResource(R.string.activity_refund_error, original) else null,
             )
             RunwayButton(
                 text = stringResource(R.string.activity_refund_save),

@@ -76,7 +76,7 @@ fun LedgerRow(
         amountMinor = tx.amountLkrMinor,
         kind = kind,
         icon = icon,
-        spoken = listOf(title, spokenAmount(tx.amountLkrMinor, expense = tx.type == TransactionType.EXPENSE), subtitle)
+        spoken = listOf(title, spokenAmount(tx.amountLkrMinor, expense = tx.type == TransactionType.EXPENSE, cents = tx.amountLkrMinor % 100 != 0L), subtitle)
             .joinToString(", "),
         modifier = modifier,
         caption = caption,

@@ -18,7 +18,8 @@ import com.example.runway.domain.repository.CategoryRepository
 import com.example.runway.domain.repository.TransactionRepository
 import com.example.runway.domain.repository.UserProfileRepository
 import com.example.runway.domain.usecase.AddTransaction
-import com.example.runway.domain.usecase.SuggestFavourites
+import com.example.runway.domain.usecase.favouritesWindowStart
+import com.example.runway.domain.usecase.suggestFavourites
 import com.example.runway.domain.usecase.TransactionDraft
 import com.example.runway.ui.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -79,7 +80,6 @@ class QuickAddViewModel @Inject constructor(
     categories: CategoryRepository,
     accounts: AccountRepository,
     profile: UserProfileRepository,
-    suggestFavourites: SuggestFavourites,
     private val transactions: TransactionRepository,
     private val addTransaction: AddTransaction,
     private val time: TimeProvider,
@@ -92,7 +92,7 @@ class QuickAddViewModel @Inject constructor(
         .flatMapLatest {
             combine(
                 categories.observeCategories(),
-                transactions.observeSince(SuggestFavourites.windowStart(time.now())),
+                transactions.observeSince(favouritesWindowStart(time.now())),
                 accounts.observeAccounts(),
                 profile.observeProfile(),
             ) { allCategories, recent, allAccounts, userProfile ->
@@ -119,9 +119,7 @@ class QuickAddViewModel @Inject constructor(
 
     val today: LocalDate get() = time.today()
 
-    fun retry() {
-        retryTick.update { it + 1 }
-    }
+    fun retry() = retryTick.update { it + 1 }
 
     fun onOpen() {
         // One client id per sheet: a double tap or a retry writes the same document (BR-19).

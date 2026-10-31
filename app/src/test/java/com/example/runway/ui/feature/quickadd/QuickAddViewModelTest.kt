@@ -14,7 +14,6 @@ import com.example.runway.domain.repository.CategoryRepository
 import com.example.runway.domain.repository.TransactionRepository
 import com.example.runway.domain.repository.UserProfileRepository
 import com.example.runway.domain.usecase.AddTransaction
-import com.example.runway.domain.usecase.SuggestFavourites
 import com.example.runway.testutil.Fixtures.account
 import com.example.runway.testutil.Fixtures.at
 import com.example.runway.testutil.Fixtures.category
@@ -70,7 +69,6 @@ class QuickAddViewModelTest {
         categories = categories,
         accounts = accounts,
         profile = profile,
-        suggestFavourites = SuggestFavourites(),
         transactions = transactions,
         addTransaction = AddTransaction(transactions, time),
         time = time,

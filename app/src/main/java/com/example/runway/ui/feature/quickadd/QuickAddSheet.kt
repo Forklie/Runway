@@ -39,9 +39,10 @@ import com.example.runway.ui.components.AmountField
 import com.example.runway.ui.components.ButtonSize
 import com.example.runway.ui.components.ButtonStyle
 import com.example.runway.ui.components.CategoryChip
+import com.example.runway.ui.components.ChipGroup
+import com.example.runway.ui.components.DateField
 import com.example.runway.ui.components.LoadingState
 import com.example.runway.ui.components.RunwayButton
-import com.example.runway.ui.components.RunwayDatePicker
 import com.example.runway.ui.components.RunwaySheet
 import com.example.runway.ui.components.RunwayTextField
 import com.example.runway.ui.components.categoryIcon
@@ -193,12 +194,9 @@ private fun AmountAndCategory(options: QuickAddOptions, form: QuickAddForm, acti
 }
 
 /** Note, date and account: hidden, never required (Doc 1 section 9.3). */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun MoreOptions(options: QuickAddOptions, form: QuickAddForm, today: LocalDate, actions: QuickAddActions) {
-    val c = RunwayTheme.colors
     var open by rememberSaveable { mutableStateOf(false) }
-    var pickingDate by rememberSaveable { mutableStateOf(false) }
 
     if (!open) {
         RunwayButton(
@@ -215,35 +213,19 @@ private fun MoreOptions(options: QuickAddOptions, form: QuickAddForm, today: Loc
         onValueChange = actions.onNoteChange,
         label = stringResource(R.string.quickadd_note),
     )
-    Text(stringResource(R.string.quickadd_date), style = RunwayType.label, color = c.ink)
-    RunwayButton(
+    DateField(
+        label = stringResource(R.string.quickadd_date),
         text = form.date?.dayMonthLabel() ?: stringResource(R.string.quickadd_today),
-        onClick = { pickingDate = true },
-        style = ButtonStyle.Secondary,
-        size = ButtonSize.Small,
+        selected = form.date ?: today,
+        latest = today,
+        onPick = actions.onDateChange,
     )
     if (options.accounts.isNotEmpty()) {
-        val selectedAccount = form.accountId ?: options.defaultAccountId
-        Text(stringResource(R.string.quickadd_account), style = RunwayType.label, color = c.ink)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-            options.accounts.forEach { account ->
-                CategoryChip(
-                    label = account.name,
-                    selected = selectedAccount == account.id,
-                    onClick = { actions.onAccountChange(account.id) },
-                )
-            }
-        }
-    }
-    if (pickingDate) {
-        RunwayDatePicker(
-            selected = form.date ?: today,
-            latest = today,
-            onPick = {
-                actions.onDateChange(it)
-                pickingDate = false
-            },
-            onDismiss = { pickingDate = false },
+        ChipGroup(
+            label = stringResource(R.string.quickadd_account),
+            choices = options.accounts.map { it.id to it.name },
+            selected = form.accountId ?: options.defaultAccountId,
+            onSelect = actions.onAccountChange,
         )
     }
 }

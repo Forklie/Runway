@@ -11,7 +11,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class SuggestFavouritesTest {
-    private val suggest = SuggestFavourites()
     private val now = at("2026-11-03")
     private val categories = (1..8).map { category("c$it", DISCRETIONARY).copy(sortOrder = it) }
 
@@ -19,7 +18,7 @@ class SuggestFavouritesTest {
 
     @Test
     fun `no history falls back to the first six by sortOrder`() {
-        assertEquals(listOf("c1", "c2", "c3", "c4", "c5", "c6"), suggest(categories, emptyList(), now).map { it.id })
+        assertEquals(listOf("c1", "c2", "c3", "c4", "c5", "c6"), suggestFavourites(categories, emptyList(), now).map { it.id })
     }
 
     @Test
@@ -29,7 +28,7 @@ class SuggestFavouritesTest {
             expense("c5", "2026-10-20"),
             expense("c7", "2026-10-25"),
         )
-        assertEquals("c8,c7,c5,c1,c2,c3", suggest(categories, history, now).joinToString(",") { it.id })
+        assertEquals("c8,c7,c5,c1,c2,c3", suggestFavourites(categories, history, now).joinToString(",") { it.id })
     }
 
     @Test
@@ -39,6 +38,6 @@ class SuggestFavouritesTest {
             tx(REFUND, lkr(100), at("2026-11-01"), category = "c7"),
             expense("c6", "2026-09-05"), // 59 days old
         )
-        assertEquals("c6,c1,c2,c3,c4,c5", suggest(categories, history, now).joinToString(",") { it.id })
+        assertEquals("c6,c1,c2,c3,c4,c5", suggestFavourites(categories, history, now).joinToString(",") { it.id })
     }
 }

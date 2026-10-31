@@ -30,9 +30,9 @@ import com.example.runway.ui.components.AmountField
 import com.example.runway.ui.components.ButtonSize
 import com.example.runway.ui.components.CategoryChip
 import com.example.runway.ui.components.EmptyState
+import com.example.runway.ui.components.ErrorState
 import com.example.runway.ui.components.LoadingState
 import com.example.runway.ui.components.RunwayButton
-import com.example.runway.ui.components.RunwayTextField
 import com.example.runway.ui.components.SmallTopBar
 import com.example.runway.ui.components.messageRes
 import com.example.runway.ui.components.problemLockup
@@ -55,7 +55,6 @@ fun TransferRoute(onDone: () -> Unit, viewModel: TransferViewModel = hiltViewMod
         onAmountChange = viewModel::onAmountChange,
         onFromChange = viewModel::onFromChange,
         onToChange = viewModel::onToChange,
-        onNoteChange = viewModel::onNoteChange,
         onSave = viewModel::onSave,
     )
 }
@@ -69,7 +68,6 @@ fun TransferScreen(
     onAmountChange: (String) -> Unit,
     onFromChange: (String) -> Unit,
     onToChange: (String) -> Unit,
-    onNoteChange: (String) -> Unit,
     onSave: () -> Unit,
 ) {
     val c = RunwayTheme.colors
@@ -84,13 +82,7 @@ fun TransferScreen(
                     body = stringResource(R.string.transfer_empty_body),
                 )
             }
-            is UiState.Error -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                EmptyState(
-                    lockup = problemLockup(),
-                    title = stringResource(R.string.error_title),
-                    body = stringResource(accounts.error.messageRes()),
-                )
-            }
+            is UiState.Error -> ErrorState(accounts.error, stringResource(R.string.ui_back), onBack)
             is UiState.Success -> {
                 val (fromId, toId) = selected(form, accounts.data)
                 Column(
@@ -112,7 +104,6 @@ fun TransferScreen(
                     )
                     AccountChips(stringResource(R.string.transfer_from), accounts.data.filter { it.id != toId }, fromId, onFromChange)
                     AccountChips(stringResource(R.string.transfer_to), accounts.data.filter { it.id != fromId }, toId, onToChange)
-                    RunwayTextField(value = form.note, onValueChange = onNoteChange, label = stringResource(R.string.activity_note))
                     Text(stringResource(R.string.transfer_helper), style = RunwayType.bodySm, color = c.inkMuted)
                     form.formError?.let { Text(stringResource(it.messageRes()), style = RunwayType.bodySm, color = c.danger) }
                 }
@@ -153,5 +144,5 @@ private fun TransferPreview() {
         Account("bank", "Bank", AccountKind.BANK, 0, 0, at, false, at),
         Account("cash", "Cash", AccountKind.CASH, 0, 0, at, false, at),
     )
-    RunwayTheme { TransferScreen(UiState.Success(accounts), TransferForm(amount = "10000"), {}, {}, {}, {}, {}, {}) }
+    RunwayTheme { TransferScreen(UiState.Success(accounts), TransferForm(amount = "10000"), {}, {}, {}, {}, {}) }
 }

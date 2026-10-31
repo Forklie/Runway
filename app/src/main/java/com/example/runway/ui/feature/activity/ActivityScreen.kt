@@ -39,14 +39,13 @@ import com.example.runway.domain.model.Transaction
 import com.example.runway.domain.model.TransactionType
 import com.example.runway.ui.components.CategoryChip
 import com.example.runway.ui.components.EmptyState
+import com.example.runway.ui.components.ErrorState
 import com.example.runway.ui.components.LargeTitle
 import com.example.runway.ui.components.LedgerRow
 import com.example.runway.ui.components.LoadingState
 import com.example.runway.ui.components.SectionHeader
 import com.example.runway.ui.components.categoryIcon
-import com.example.runway.ui.components.messageRes
 import com.example.runway.ui.components.monthYearLabel
-import com.example.runway.ui.components.problemLockup
 import com.example.runway.ui.components.weekdayLabel
 import com.example.runway.ui.feature.home.nothingYetLockup
 import com.example.runway.ui.state.UiState
@@ -92,22 +91,14 @@ fun ActivityScreen(
         Box(Modifier.weight(1f)) {
             when (state) {
                 UiState.Loading -> LoadingState()
-                UiState.Empty -> Centred {
+                UiState.Empty -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     EmptyState(
                         lockup = nothingYetLockup(),
                         title = stringResource(R.string.activity_empty_title),
                         body = stringResource(R.string.activity_empty_body),
                     )
                 }
-                is UiState.Error -> Centred {
-                    EmptyState(
-                        lockup = problemLockup(),
-                        title = stringResource(R.string.error_title),
-                        body = stringResource(state.error.messageRes()),
-                        actionLabel = stringResource(R.string.action_retry),
-                        onAction = onRetry,
-                    )
-                }
+                is UiState.Error -> ErrorState(state.error, stringResource(R.string.action_retry), onRetry)
                 is UiState.Success -> ActivityList(state.data, onCategorySelected, onOpen)
             }
         }
@@ -188,11 +179,6 @@ private fun ActivityList(content: ActivityContent, onCategorySelected: (String?)
             }
         }
     }
-}
-
-@Composable
-private fun Centred(content: @Composable () -> Unit) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { content() }
 }
 
 private fun previewContent(): ActivityContent {

@@ -2,7 +2,6 @@ package com.example.runway.ui.feature.activity
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -39,7 +38,7 @@ import com.example.runway.ui.components.AmountField
 import com.example.runway.ui.components.ButtonSize
 import com.example.runway.ui.components.ButtonStyle
 import com.example.runway.ui.components.CategoryChip
-import com.example.runway.ui.components.EmptyState
+import com.example.runway.ui.components.ErrorState
 import com.example.runway.ui.components.LoadingState
 import com.example.runway.ui.components.RunwayButton
 import com.example.runway.ui.components.RunwayDatePicker
@@ -48,7 +47,6 @@ import com.example.runway.ui.components.RunwayTextField
 import com.example.runway.ui.components.SmallTopBar
 import com.example.runway.ui.components.dayMonthLabel
 import com.example.runway.ui.components.messageRes
-import com.example.runway.ui.components.problemLockup
 import com.example.runway.ui.state.UiState
 import com.example.runway.ui.theme.Dimens
 import com.example.runway.ui.theme.RunwayTheme
@@ -103,15 +101,7 @@ fun TransactionDetailScreen(state: UiState<DetailContent>, form: DetailForm, tod
         SmallTopBar(title = stringResource(R.string.activity_detail_title), onBack = actions.onBack)
         when (state) {
             is UiState.Success -> DetailForm(state.data, form, today, actions)
-            is UiState.Error -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                EmptyState(
-                    lockup = problemLockup(),
-                    title = stringResource(R.string.error_title),
-                    body = stringResource(state.error.messageRes()),
-                    actionLabel = stringResource(R.string.ui_back),
-                    onAction = actions.onBack,
-                )
-            }
+            is UiState.Error -> ErrorState(state.error, stringResource(R.string.ui_back), actions.onBack)
             else -> LoadingState()
         }
     }

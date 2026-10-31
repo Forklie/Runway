@@ -35,7 +35,6 @@ data class TransferForm(
     val amount: String = "",
     val fromId: String? = null, // null means the default: the first bank account
     val toId: String? = null,   // null means the default: Cash, so an ATM withdrawal takes two taps
-    val note: String = "",
     val amountError: Boolean = false,
     val formError: AppError? = null,
     val saving: Boolean = false,
@@ -61,7 +60,6 @@ class TransferViewModel @Inject constructor(
             amount = savedState[KEY_AMOUNT] ?: "",
             fromId = savedState[KEY_FROM],
             toId = savedState[KEY_TO],
-            note = savedState[KEY_NOTE] ?: "",
         ),
     )
     val form: StateFlow<TransferForm> = _form.asStateFlow()
@@ -77,8 +75,6 @@ class TransferViewModel @Inject constructor(
     fun onFromChange(id: String) = update { it.copy(fromId = id) }
 
     fun onToChange(id: String) = update { it.copy(toId = id) }
-
-    fun onNoteChange(value: String) = update { it.copy(note = value.take(AddTransaction.MAX_NOTE)) }
 
     fun onSave() {
         val form = _form.value
@@ -99,7 +95,6 @@ class TransferViewModel @Inject constructor(
                 date = time.now(),
                 accountId = from,
                 toAccountId = to,
-                note = form.note,
             )
             when (val result = addTransaction(draft)) {
                 is AppResult.Success -> _done.send(Unit)
@@ -114,14 +109,12 @@ class TransferViewModel @Inject constructor(
         savedState[KEY_AMOUNT] = next.amount
         savedState[KEY_FROM] = next.fromId
         savedState[KEY_TO] = next.toId
-        savedState[KEY_NOTE] = next.note
     }
 
     private companion object {
         const val KEY_AMOUNT = "transfer_amount"
         const val KEY_FROM = "transfer_from"
         const val KEY_TO = "transfer_to"
-        const val KEY_NOTE = "transfer_note"
         const val KEY_ID = "transfer_id"
     }
 }

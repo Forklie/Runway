@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 /**
  * BR-52: PAID creates the INCOME transaction and links it, so a payment always says which project it was for.
- * The transaction's id comes from the milestone's, so a double tap or retry rewrites one document (BR-19).
+ * The milestone keeps what actually arrived, so "paid" totals match the income. The transaction's id comes from the milestone's, so a double tap or retry rewrites one document (BR-19).
  * ponytail: freelance income is LKR here. A USD client goes through Log income; add a rate field if that becomes common.
  */
 class MarkMilestonePaid @Inject constructor(
@@ -33,7 +33,7 @@ class MarkMilestonePaid @Inject constructor(
             is AppResult.Failure -> return built
             is AppResult.Success -> built.value
         }
-        val paid = milestone.copy(status = MilestoneStatus.PAID, paidDate = income.date, linkedTxId = income.id)
+        val paid = milestone.copy(amountMinor = amountMinor, status = MilestoneStatus.PAID, paidDate = income.date, linkedTxId = income.id)
         return repository.markPaid(paid, income)
     }
 }

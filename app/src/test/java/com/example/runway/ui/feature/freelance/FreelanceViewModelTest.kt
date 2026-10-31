@@ -121,6 +121,7 @@ class FreelanceViewModelTest {
         assertEquals(MilestoneStatus.PAID, milestone.status)
         assertEquals(income.id, milestone.linkedTxId)
         assertEquals(income.date, milestone.paidDate)
+        assertEquals(4_500_000L, milestone.amountMinor) // what arrived, not the 50,000 invoiced
     }
 
     @Test

@@ -207,12 +207,8 @@ class LogIncomeViewModel @Inject constructor(
                 accountId = form.accountId ?: options.defaultAccountId,
                 incomeSourceId = source.id,
             )
-            val pyf = options.offersPyf(form) && form.pyfOn
-            val result = logIncome(
-                income = draft,
-                pyfPercent = options.pyfPercent.takeIf { pyf },
-                goalFundId = options.goalFundId.takeIf { pyf },
-            )
+            val pyfPercent = if (options.offersPyf(form) && form.pyfOn) options.pyfPercent else 0.0
+            val result = logIncome(draft, pyfPercent, options.goalFundId)
             when (result) {
                 is AppResult.Success -> {
                     if (source.id in options.unsavedSourceIds) sources.add(source)

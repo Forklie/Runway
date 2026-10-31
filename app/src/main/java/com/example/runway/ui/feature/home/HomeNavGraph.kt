@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.runway.ui.feature.checkin.openCheckin
 import com.example.runway.ui.feature.settings.SettingsDest
-import com.example.runway.ui.feature.income.openLogIncome
+import com.example.runway.ui.feature.income.LogIncomeDest
 import com.example.runway.ui.navigation.ActivityDest
 import com.example.runway.ui.navigation.GoalDest
 import com.example.runway.ui.navigation.HomeDest
@@ -22,7 +22,7 @@ fun NavGraphBuilder.homeScreens(nav: NavController) {
                 onOpenGoal = { nav.navigateTopLevel(GoalDest) },
                 onSeeActivity = { nav.navigateTopLevel(ActivityDest) },
                 onCheckin = { nav.openCheckin() },
-                onIncome = { nav.openLogIncome() },
+                onIncome = { nav.navigate(LogIncomeDest) { launchSingleTop = true } },
                 onSettings = { nav.navigate(SettingsDest) { launchSingleTop = true } },
             ),
         )

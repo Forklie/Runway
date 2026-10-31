@@ -14,8 +14,3 @@ fun NavGraphBuilder.incomeScreens(nav: NavController) {
         LogIncomeRoute(onDone = { nav.popBackStack() })
     }
 }
-
-/** Opens Log income from Home's action row. */
-fun NavController.openLogIncome() {
-    navigate(LogIncomeDest) { launchSingleTop = true }
-}

@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,9 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -41,12 +36,11 @@ import com.example.runway.domain.model.Reliability
 import com.example.runway.domain.usecase.LogIncome
 import com.example.runway.ui.components.AmountField
 import com.example.runway.ui.components.ButtonSize
-import com.example.runway.ui.components.ButtonStyle
-import com.example.runway.ui.components.CategoryChip
+import com.example.runway.ui.components.ChipGroup
+import com.example.runway.ui.components.DateField
 import com.example.runway.ui.components.ErrorState
 import com.example.runway.ui.components.LoadingState
 import com.example.runway.ui.components.RunwayButton
-import com.example.runway.ui.components.RunwayDatePicker
 import com.example.runway.ui.components.RunwayTextField
 import com.example.runway.ui.components.SmallTopBar
 import com.example.runway.ui.components.dayMonthLabel
@@ -126,7 +120,6 @@ private fun ColumnScope.IncomeFields(
     val c = RunwayTheme.colors
     val currency = options.currencyFor(form)
     val source = options.sourceFor(form)
-    var pickingDate by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -138,8 +131,8 @@ private fun ColumnScope.IncomeFields(
             .padding(top = Spacing.s2, bottom = Spacing.s6),
         verticalArrangement = Arrangement.spacedBy(Spacing.s6),
     ) {
-        Chips(stringResource(R.string.income_source), options.sources.map { it.id to it.name }, source?.id, actions.onSourceChange)
-        Chips(
+        ChipGroup(stringResource(R.string.income_source), options.sources.map { it.id to it.name }, source?.id, actions.onSourceChange)
+        ChipGroup(
             stringResource(R.string.income_currency),
             CurrencyCode.entries.map { it.name to it.name },
             currency.name,
@@ -154,7 +147,7 @@ private fun ColumnScope.IncomeFields(
         )
         if (currency != CurrencyCode.LKR) RateFields(options, form, actions)
         if (options.accounts.isNotEmpty()) {
-            Chips(
+            ChipGroup(
                 stringResource(R.string.income_account),
                 options.accounts.map { it.id to it.name },
                 form.accountId ?: options.defaultAccountId,
@@ -162,15 +155,13 @@ private fun ColumnScope.IncomeFields(
             )
         }
         if (options.offersPyf(form)) PyfRow(options, form, currency, actions.onPyfChange)
-        Column(verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-            Text(stringResource(R.string.income_date), style = RunwayType.label, color = c.ink)
-            RunwayButton(
-                text = form.date?.dayMonthLabel() ?: stringResource(R.string.income_today),
-                onClick = { pickingDate = true },
-                style = ButtonStyle.Secondary,
-                size = ButtonSize.Small,
-            )
-        }
+        DateField(
+            label = stringResource(R.string.income_date),
+            text = form.date?.dayMonthLabel() ?: stringResource(R.string.income_today),
+            selected = form.date ?: today,
+            latest = today,
+            onPick = actions.onDateChange,
+        )
         form.formError?.let { Text(stringResource(it.messageRes()), style = RunwayType.bodySm, color = c.danger) }
     }
     RunwayButton(
@@ -184,17 +175,6 @@ private fun ColumnScope.IncomeFields(
         fillWidth = true,
         loading = form.saving,
     )
-    if (pickingDate) {
-        RunwayDatePicker(
-            selected = form.date ?: today,
-            latest = today,
-            onPick = {
-                actions.onDateChange(it)
-                pickingDate = false
-            },
-            onDismiss = { pickingDate = false },
-        )
-    }
 }
 
 /** The rate or the LKR that arrived, whichever the person has to hand (BR-06), with the result worked out live. */
@@ -204,7 +184,7 @@ private fun RateFields(options: IncomeOptions, form: IncomeForm, actions: LogInc
     val amount = MoneyParser.parseToMinor(form.amount)
     val rate = options.effectiveRate(form)
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-        Chips(
+        ChipGroup(
             stringResource(R.string.income_rate_mode),
             listOf(
                 "rate" to stringResource(R.string.income_mode_rate),
@@ -259,19 +239,6 @@ private fun PyfRow(options: IncomeOptions, form: IncomeForm, currency: CurrencyC
             )
         }
         Switch(checked = form.pyfOn, onCheckedChange = onChange)
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun Chips(label: String, choices: List<Pair<String, String>>, selected: String?, onSelect: (String) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-        Text(label, style = RunwayType.label, color = RunwayTheme.colors.ink)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s2), verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-            choices.forEach { (id, name) ->
-                CategoryChip(label = name, selected = id == selected, onClick = { onSelect(id) })
-            }
-        }
     }
 }
 

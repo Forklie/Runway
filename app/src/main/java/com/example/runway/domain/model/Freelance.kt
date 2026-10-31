@@ -14,7 +14,6 @@ data class FreelanceProject(
     val title: String,
     val totalMinor: Long,
     val createdAt: Instant,
-    val archived: Boolean,
 )
 
 /** users/{uid}/milestones/{id}. A flat collection with [projectId], so overdue items need one query (Doc 2 section 6.1). */

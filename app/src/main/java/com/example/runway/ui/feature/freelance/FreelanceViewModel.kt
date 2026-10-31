@@ -90,7 +90,7 @@ class FreelanceViewModel @Inject constructor(
     fun onAddProject(client: String, title: String, total: String): Boolean {
         val amount = MoneyParser.parseToMinor(total)
         if (client.isBlank() || title.isBlank() || amount == null) return false
-        val project = FreelanceProject(UUID.randomUUID().toString(), client.trim(), title.trim(), amount, time.now(), false)
+        val project = FreelanceProject(UUID.randomUUID().toString(), client.trim(), title.trim(), amount, time.now())
         viewModelScope.launch { report(freelance.saveProject(project)) }
         return true
     }
@@ -107,7 +107,7 @@ class ProjectViewModel @Inject constructor(
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
-    private val projectId: String = savedState[KEY_PROJECT_ID] ?: ""
+    private val projectId: String = savedState["projectId"] ?: "" // the route's argument name (ProjectDest.projectId)
 
     val uiState: StateFlow<UiState<ProjectDetail>> = combine(
         freelance.observeProjects(),
@@ -167,10 +167,6 @@ class ProjectViewModel @Inject constructor(
 
     private fun write(block: suspend () -> AppResult<Unit>) {
         viewModelScope.launch { report(block()) }
-    }
-
-    private companion object {
-        const val KEY_PROJECT_ID = "projectId" // the route's argument name (ProjectDest.projectId)
     }
 }
 

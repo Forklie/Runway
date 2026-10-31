@@ -50,7 +50,7 @@ class FreelanceViewModelTest {
     private val time = TimeProvider(Clock.fixed(Instant.parse("2026-11-10T04:00:00Z"), colombo))
     private val today = LocalDate.of(2026, 11, 10)
 
-    private val project = FreelanceProject("p", "Lanka Tea", "Website", 15_000_000, at("2026-10-01"), false)
+    private val project = FreelanceProject("p", "Lanka Tea", "Website", 15_000_000, at("2026-10-01"))
     private val paid = milestone("paid", MilestoneStatus.PAID)
     private val late = milestone("late", MilestoneStatus.INVOICED, due = at("2026-11-09"))
     private val dueToday = milestone("today", MilestoneStatus.INVOICED, due = at("2026-11-10"))

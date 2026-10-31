@@ -14,7 +14,6 @@ fun FreelanceProjectDto.toDomain(id: String) = FreelanceProject(
     title = title,
     totalMinor = totalMinor,
     createdAt = createdAt.toInstantOr(),
-    archived = archived,
 )
 
 fun FreelanceProject.toDto() = FreelanceProjectDto(
@@ -22,7 +21,6 @@ fun FreelanceProject.toDto() = FreelanceProjectDto(
     title = title,
     totalMinor = totalMinor,
     createdAt = createdAt.toTimestamp(),
-    archived = archived,
 )
 
 /** An unknown status reads as PLANNED: only PAID ever counts as income (BR-54). */

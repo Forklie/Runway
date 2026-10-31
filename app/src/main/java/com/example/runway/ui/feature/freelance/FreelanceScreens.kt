@@ -5,8 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -41,7 +39,7 @@ import com.example.runway.ui.components.ButtonSize
 import com.example.runway.ui.components.ButtonStyle
 import com.example.runway.ui.components.CardTitle
 import com.example.runway.ui.components.CardTone
-import com.example.runway.ui.components.CategoryChip
+import com.example.runway.ui.components.ChipGroup
 import com.example.runway.ui.components.EmptyState
 import com.example.runway.ui.components.ErrorState
 import com.example.runway.ui.components.LoadingState
@@ -325,10 +323,8 @@ private fun AddMilestoneSheet(onDismiss: () -> Unit, onSave: (String, String) ->
 }
 
 /** BR-52: prompts for the account and the amount received, which may differ from what was invoiced. */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun MarkPaidSheet(milestone: Milestone, accounts: List<Account>, onDismiss: () -> Unit, onSave: (String, String?) -> Boolean) {
-    val c = RunwayTheme.colors
     var amount by rememberSaveable { mutableStateOf(BigDecimal.valueOf(milestone.amountMinor, 2).stripTrailingZeros().toPlainString()) }
     var accountId by rememberSaveable { mutableStateOf(accounts.firstOrNull()?.id) }
     var showErrors by rememberSaveable { mutableStateOf(false) }
@@ -339,12 +335,7 @@ private fun MarkPaidSheet(milestone: Milestone, accounts: List<Account>, onDismi
             label = stringResource(R.string.freelance_received),
             errorText = stringResource(R.string.amount_error_invalid).takeIf { showErrors },
         )
-        Text(stringResource(R.string.freelance_paid_into), style = RunwayType.label, color = c.ink)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s2), verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-            accounts.forEach { account ->
-                CategoryChip(label = account.name, selected = account.id == accountId, onClick = { accountId = account.id })
-            }
-        }
+        ChipGroup(stringResource(R.string.freelance_paid_into), accounts.map { it.id to it.name }, accountId) { accountId = it }
         RunwayButton(
             text = stringResource(R.string.freelance_save_paid),
             onClick = { if (onSave(amount, accountId)) onDismiss() else showErrors = true },
@@ -392,7 +383,7 @@ fun OverdueMilestonesCard(onOpenProject: (String) -> Unit, viewModel: OverdueVie
 @Preview(showBackground = true, heightDp = 500)
 @Composable
 private fun FreelancePreview() {
-    val project = FreelanceProject("p", "Lanka Tea", "Website", 15_000_000, Instant.EPOCH, false)
+    val project = FreelanceProject("p", "Lanka Tea", "Website", 15_000_000, Instant.EPOCH)
     RunwayTheme {
         FreelanceScreen(UiState.Success(listOf(ProjectSummary(project, 5_000_000, 5_000_000, 1))), {}, {}, {}, { _, _, _ -> true })
     }
@@ -401,7 +392,7 @@ private fun FreelancePreview() {
 @Preview(showBackground = true, heightDp = 700)
 @Composable
 private fun ProjectPreview() {
-    val project = FreelanceProject("p", "Lanka Tea", "Website", 15_000_000, Instant.EPOCH, false)
+    val project = FreelanceProject("p", "Lanka Tea", "Website", 15_000_000, Instant.EPOCH)
     val milestones = listOf(
         Milestone("1", "p", "Design", 5_000_000, MilestoneStatus.PAID, null, null, Instant.EPOCH, "t"),
         Milestone("2", "p", "Build", 5_000_000, MilestoneStatus.INVOICED, null, Instant.EPOCH, null, null),

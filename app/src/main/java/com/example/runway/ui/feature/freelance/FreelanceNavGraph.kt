@@ -18,10 +18,6 @@ fun NavGraphBuilder.freelanceScreens(nav: NavController) {
     }
 }
 
-fun NavController.openFreelance() {
-    navigate(FreelanceDest) { launchSingleTop = true }
-}
-
 fun NavController.openProject(id: String) {
     navigate(ProjectDest(id)) { launchSingleTop = true }
 }

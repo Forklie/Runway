@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 /** Writes return after the LOCAL write, never after server acknowledgement. */
 interface FreelanceRepository {
-    fun observeProjects(): Flow<List<FreelanceProject>> // non-archived, newest first
+    fun observeProjects(): Flow<List<FreelanceProject>> // newest first
     fun observeMilestones(): Flow<List<Milestone>>      // every project's
 
     suspend fun saveProject(project: FreelanceProject): AppResult<Unit>

@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 
-/** users/{uid}/freelanceProjects and users/{uid}/milestones. Small lists: sorted and filtered on the client. */
+/** users/{uid}/freelanceProjects and users/{uid}/milestones. Small lists: sorted on the client. */
 @Singleton
 class FreelanceRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -32,7 +32,7 @@ class FreelanceRepositoryImpl @Inject constructor(
 
     override fun observeProjects(): Flow<List<FreelanceProject>> =
         observe("freelanceProjects") { docs ->
-            docs.mapNotNull { it.toFreelanceProjectOrNull() }.filterNot { it.archived }.sortedByDescending { it.createdAt }
+            docs.mapNotNull { it.toFreelanceProjectOrNull() }.sortedByDescending { it.createdAt }
         }
 
     override fun observeMilestones(): Flow<List<Milestone>> =

@@ -8,7 +8,6 @@ data class FreelanceProjectDto(
     var title: String = "",
     var totalMinor: Long = 0L,
     var createdAt: Timestamp? = null,
-    var archived: Boolean = false,
 )
 
 /** users/{uid}/milestones/{id} (Doc 2 section 6.2). */

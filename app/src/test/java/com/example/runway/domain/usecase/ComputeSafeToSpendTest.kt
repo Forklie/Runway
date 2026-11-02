@@ -94,7 +94,7 @@ class ComputeSafeToSpendTest {
     }
 
     @Test
-    fun `planned committed costs: monthly items, yearly ones spread, foreign ones converted`() {
+    fun `planned committed costs count monthly items, yearly ones spread, foreign ones converted`() {
         val items = listOf(
             recurring("rent", lkr(34_000), RecurringFrequency.MONTHLY),
             recurring("insurance", lkr(12_000), RecurringFrequency.YEARLY),

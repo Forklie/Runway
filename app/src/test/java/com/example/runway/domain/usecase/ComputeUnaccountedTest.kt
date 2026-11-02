@@ -13,7 +13,7 @@ class ComputeUnaccountedTest {
     private val compute = ComputeUnaccounted()
 
     @Test
-    fun `worked example: expected 90,100, entered 84,000 leaves a 6,100 gap (BR-81, AT-12)`() {
+    fun `worked example, expected 90,100, entered 84,000 leaves a 6,100 gap (BR-81, AT-12)`() {
         assertEquals(lkr(6_100), compute.gap(expectedMinor = lkr(90_100), enteredMinor = lkr(84_000)))
     }
 
@@ -23,7 +23,7 @@ class ComputeUnaccountedTest {
     }
 
     @Test
-    fun `worked example: Clarity is about 91 percent (BR-82)`() {
+    fun `worked example, Clarity is about 91 percent (BR-82)`() {
         assertEquals(91, compute.clarityPercent(loggedExpensesMinor = lkr(62_000), unaccountedMinor = lkr(6_100)))
     }
 

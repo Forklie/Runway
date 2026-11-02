@@ -9,6 +9,7 @@ import com.example.runway.domain.model.Transaction
 import com.example.runway.domain.model.TransactionType
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +27,7 @@ sealed interface HomePrompt {
 data class HomeSummary(
     val firstName: String,
     val today: LocalDate,
+    val zone: ZoneId, // row times are shown in the user's zone
     val safeToSpend: SafeToSpend,
     val safeToSpendInput: SafeToSpendInput, // shown in "How we worked this out"
     val pace: SpendPace,
@@ -91,6 +93,7 @@ class ObserveHomeSummary @Inject constructor(
         return HomeSummary(
             firstName = ledger.profile?.displayName?.trim()?.substringBefore(' ').orEmpty(),
             today = ledger.today,
+            zone = ledger.zone,
             safeToSpend = result,
             safeToSpendInput = input,
             pace = safeToSpend.pace(result, month.discretionaryMinor, ledger.today),

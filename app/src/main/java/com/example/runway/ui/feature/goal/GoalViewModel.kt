@@ -120,8 +120,9 @@ class GoalViewModel @Inject constructor(
         val form = _forms.value
         val price = MoneyParser.parseToMinor(form.whatIfAmount)
             ?: return updateForms { it.copy(whatIfAmountError = true) }
-        savedState[KEY_SHOWN_PRICE] = price
+        // Label first: setting the price is what shows the card, so it must never show the old label.
         savedState[KEY_SHOWN_LABEL] = form.whatIfLabel.trim()
+        savedState[KEY_SHOWN_PRICE] = price
         updateForms { it.copy(sheet = null, whatIfLabel = "", whatIfAmount = "") }
     }
 

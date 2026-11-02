@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="crypto_title">Crypto ledger</string>
+    <string name="crypto_net_up">Up %1$s overall</string>
+    <string name="crypto_net_down">Down %1$s overall</string>
+    <string name="crypto_net_even">Even overall</string>
+    <string name="crypto_entries">Entries</string>
+
+    <!-- Entry types (BR-60) -->
+    <string name="crypto_type_deposit">Put in</string>
+    <string name="crypto_type_withdrawal">Took out</string>
+    <string name="crypto_type_snapshot">Holdings now</string>
+    <string name="crypto_caption_snapshot">Holdings</string>
+
+    <!-- Add sheet -->
+    <string name="crypto_add">Add entry</string>
+    <string name="crypto_sheet_title">Add a crypto entry</string>
+    <string name="crypto_sheet_body">Amounts are in LKR. This ledger stays separate from Safe to Spend.</string>
+    <string name="crypto_asset">Asset</string>
+    <string name="crypto_asset_placeholder">USDT, ETH</string>
+    <string name="crypto_amount">Amount</string>
+    <string name="crypto_note">Note (optional)</string>
+    <string name="crypto_save">Save entry</string>
+    <string name="crypto_added">Saved · %1$s</string>
+    <string name="crypto_undo">Undo</string>
+
+    <!-- Empty -->
+    <string name="crypto_empty_title">No crypto entries yet</string>
+    <string name="crypto_empty_body">Log what you put in and take out, and now and then what your holdings are worth. We keep the running net position.</string>
+    <string name="lockup_crypto">crypto</string>
+</resources>

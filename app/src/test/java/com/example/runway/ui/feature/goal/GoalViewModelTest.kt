@@ -20,9 +20,11 @@ import io.mockk.slot
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -31,6 +33,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class GoalViewModelTest {
 
     @get:Rule
@@ -89,7 +92,7 @@ class GoalViewModelTest {
     @Test
     fun `add to fund writes one transfer into the goal fund, even on a double tap (BR-13, BR-19)`() = runTest {
         val vm = viewModel()
-        backgroundScope.launch { vm.uiState.collect {} }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
 
         vm.onOpenAddToFund()
         vm.onFundAmountChange("5000")
@@ -116,7 +119,7 @@ class GoalViewModelTest {
     @Test
     fun `add to fund without an amount asks for one`() = runTest {
         val vm = viewModel()
-        backgroundScope.launch { vm.uiState.collect {} }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect {} }
         vm.onOpenAddToFund()
         vm.onSubmitAddToFund()
 

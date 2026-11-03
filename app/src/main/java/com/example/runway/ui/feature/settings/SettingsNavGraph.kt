@@ -3,6 +3,7 @@ package com.example.runway.ui.feature.settings
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.example.runway.ui.feature.subscriptions.SubscriptionsDest
 
 /**
  * Settings screens. AppNavHost calls this in one line.
@@ -10,6 +11,9 @@ import androidx.navigation.compose.composable
  */
 fun NavGraphBuilder.settingsScreens(nav: NavController) {
     composable<SettingsDest> {
-        SettingsRoute(onBack = { nav.popBackStack() })
+        SettingsRoute(
+            onBack = { nav.popBackStack() },
+            onOpenSubscriptions = { nav.navigate(SubscriptionsDest) { launchSingleTop = true } },
+        )
     }
 }

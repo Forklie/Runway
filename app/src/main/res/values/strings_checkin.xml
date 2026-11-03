@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="checkin_title">Weekly check-in</string>
+    <string name="checkin_review_step">Review</string>
+    <string name="checkin_steps_description">Weekly check-in, step %1$d of %2$d, %3$s</string>
+
+    <!-- One question per account (design system, Flow template and Bottom sheet copy) -->
+    <string name="checkin_question_cash">How much cash is in your wallet right now?</string>
+    <string name="checkin_question_bank">What does %1$s show right now?</string>
+    <string name="checkin_question_fund">How much is in %1$s right now?</string>
+    <string name="checkin_hint">Open the app or look in your wallet and type what you see. Close enough is fine.</string>
+    <string name="checkin_balance_label">Balance</string>
+    <string name="checkin_balance_error">Enter the balance as a number. 0 is fine.</string>
+    <string name="checkin_expected">We expect %1$s.</string>
+    <string name="checkin_gap_positive">We expected %1$s. The %2$s difference goes to Unaccounted.</string>
+    <string name="checkin_gap_negative">That\'s %1$s more than we expected. It goes to Unaccounted too, probably income or a refund we didn\'t see.</string>
+    <string name="checkin_gap_none">That matches what we expected.</string>
+    <string name="checkin_continue">Continue</string>
+    <string name="checkin_skip">Skip this account</string>
+
+    <!-- Review -->
+    <string name="checkin_review_title">Here\'s your week</string>
+    <string name="checkin_review_body">Saving makes these balances your new starting point, so totals stay right even on days you don\'t log.</string>
+    <string name="checkin_row_skipped">Skipped, keeps its last balance</string>
+    <string name="checkin_row_gap">%1$s · %2$s unaccounted</string>
+    <string name="checkin_row_extra">%1$s · %2$s more than expected</string>
+    <string name="checkin_row_match">%1$s · matches</string>
+    <string name="checkin_total_gap">%1$s not logged this week. That\'s normal.</string>
+    <string name="checkin_choice_question">What would you like to do with it?</string>
+    <string name="checkin_choice_leave">Leave it as unaccounted</string>
+    <string name="checkin_choice_log">Log it as spending</string>
+    <string name="checkin_category_label">In which category?</string>
+    <string name="checkin_gap_note">Unlogged spending</string>
+    <string name="checkin_save">Save check-in</string>
+    <string name="checkin_how">Expected = last balance you checked + money in − money out since then. The gap = expected − what you typed. Positive means spending we didn\'t see; negative means money we didn\'t see arrive.</string>
+
+    <!-- No accounts -->
+    <string name="checkin_empty_title">No accounts to check yet</string>
+    <string name="checkin_empty_body">Your accounts appear here once your account setup has synced.</string>
+</resources>

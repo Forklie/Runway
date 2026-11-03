@@ -16,6 +16,7 @@
     <string name="offline_body">Everything syncs with your account when you\'re back online.</string>
     <string name="error_title">We couldn\'t load this</string>
     <string name="placeholder_body">This screen is on its way.</string>
+    <string name="write_rejected_message">One change couldn\'t be saved to your account. Everything else is safe. Check it and try again.</string>
 
     <!-- Word-chip lockups -->
     <string name="lockup_saved">saved</string>

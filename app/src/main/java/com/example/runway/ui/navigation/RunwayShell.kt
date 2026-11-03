@@ -7,14 +7,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -22,6 +27,10 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.runway.R
+import com.example.runway.core.event.AppEvent
+import com.example.runway.core.event.AppEvents
+import com.example.runway.ui.components.OfflineChip
 import com.example.runway.ui.feature.auth.authDestinations
 import com.example.runway.ui.feature.onboarding.OnboardingDest
 import com.example.runway.ui.feature.session.RouteGroup
@@ -31,6 +40,7 @@ import com.example.runway.ui.feature.session.SessionViewModel
 import com.example.runway.ui.feature.session.routeGroupOf
 import com.example.runway.ui.feature.session.startDestination
 import com.example.runway.ui.theme.RunwayTheme
+import com.example.runway.ui.theme.Spacing
 
 /**
  * Root composable. Owns the bottom bar, the bottom inset and session routing.
@@ -40,12 +50,27 @@ import com.example.runway.ui.theme.RunwayTheme
  * (onboarding, check-in, forms).
  */
 @Composable
-fun RunwayShell(sessionViewModel: SessionViewModel = hiltViewModel()) {
+fun RunwayShell(
+    sessionViewModel: SessionViewModel = hiltViewModel(),
+    shellViewModel: ShellViewModel = hiltViewModel(),
+) {
     val colors = RunwayTheme.colors
     val session by sessionViewModel.state.collectAsStateWithLifecycle()
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
+
+    // Offline chip (FR-04) and the app-wide snackbar for writes the server refused (NFR-03).
+    val isOnline by shellViewModel.isOnline.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val rejectedMessage = stringResource(R.string.write_rejected_message)
+    LaunchedEffect(Unit) {
+        AppEvents.events.collect { event ->
+            when (event) {
+                AppEvent.WriteRejected -> snackbarHostState.showSnackbar(rejectedMessage)
+            }
+        }
+    }
 
     // The first route we can start on (Login or Home). The splash screen covers the wait.
     var firstRoute by remember { mutableStateOf<Any?>(null) }
@@ -74,6 +99,7 @@ fun RunwayShell(sessionViewModel: SessionViewModel = hiltViewModel()) {
         Scaffold(
             containerColor = colors.bg,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             bottomBar = {
                 if (showBottomBar) {
                     BottomBar(
@@ -96,6 +122,16 @@ fun RunwayShell(sessionViewModel: SessionViewModel = hiltViewModel()) {
                         ),
                 )
             }
+        }
+
+        // Saved on this phone: shown on every screen except sign-in while there is no network.
+        if (!isOnline && !currentDestination.isAuthRoute()) {
+            OfflineChip(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .statusBarsPadding()
+                    .padding(top = Spacing.s2),
+            )
         }
 
         // Signed in, but the profile could not be loaded or repaired (usually offline).

@@ -55,15 +55,13 @@ data class HomeActions(
 @Composable
 fun HomeRoute(actions: HomeActions, viewModel: HomeViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val online by viewModel.isOnline.collectAsStateWithLifecycle()
-    HomeScreen(state = state, online = online, actions = actions, onRetry = viewModel::retry)
+    HomeScreen(state = state, actions = actions, onRetry = viewModel::retry)
 }
 
 /** Stateless: plain state and lambdas, so it previews and tests without Hilt or Firebase. */
 @Composable
 fun HomeScreen(
     state: UiState<HomeSummary>,
-    online: Boolean,
     actions: HomeActions,
     onRetry: () -> Unit,
 ) {
@@ -88,7 +86,7 @@ fun HomeScreen(
                     onAction = onRetry,
                 )
             }
-            is UiState.Success -> HomeContent(state.data, online, actions)
+            is UiState.Success -> HomeContent(state.data, actions)
         }
     }
 }
@@ -98,7 +96,7 @@ fun HomeScreen(
  * this month, today. When the hero scrolls away a compact bar keeps the number on screen.
  */
 @Composable
-private fun HomeContent(summary: HomeSummary, online: Boolean, actions: HomeActions) {
+private fun HomeContent(summary: HomeSummary, actions: HomeActions) {
     val listState = rememberLazyListState()
     val heroGone by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     val onCheckin = actions.onCheckin
@@ -107,7 +105,7 @@ private fun HomeContent(summary: HomeSummary, online: Boolean, actions: HomeActi
 
     Box(Modifier.fillMaxSize()) {
         LazyColumn(state = listState, contentPadding = PaddingValues(bottom = Spacing.s16)) {
-            item(key = "hero") { SafeToSpendHero(summary, online, actions.onSettings) }
+            item(key = "hero") { SafeToSpendHero(summary, actions.onSettings) }
             item(key = "actions") { ActionRow(actions) }
             if (prompt != null && onCheckin != null) {
                 item(key = "prompt") {
@@ -163,32 +161,32 @@ private fun Centred(content: @Composable () -> Unit) {
 @Composable
 private fun HomeSuccessPreview() {
     RunwayTheme {
-        HomeScreen(UiState.Success(previewHomeSummary()), online = true, actions = previewHomeActions(), onRetry = {})
+        HomeScreen(UiState.Success(previewHomeSummary()), actions = previewHomeActions(), onRetry = {})
     }
 }
 
 @Preview(showBackground = true, heightDp = 900)
 @Composable
-private fun HomeOfflineDayZeroPreview() {
+private fun HomeDayZeroPreview() {
     RunwayTheme {
-        HomeScreen(UiState.Success(previewHomeSummary(dayZero = true)), online = false, actions = previewHomeActions(), onRetry = {})
+        HomeScreen(UiState.Success(previewHomeSummary(dayZero = true)), actions = previewHomeActions(), onRetry = {})
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun HomeLoadingPreview() {
-    RunwayTheme { HomeScreen(UiState.Loading, online = true, actions = HomeActions(), onRetry = {}) }
+    RunwayTheme { HomeScreen(UiState.Loading, actions = HomeActions(), onRetry = {}) }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun HomeEmptyPreview() {
-    RunwayTheme { HomeScreen(UiState.Empty, online = true, actions = previewHomeActions(), onRetry = {}) }
+    RunwayTheme { HomeScreen(UiState.Empty, actions = previewHomeActions(), onRetry = {}) }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun HomeErrorPreview() {
-    RunwayTheme { HomeScreen(UiState.Error(AppError.Network), online = false, actions = HomeActions(), onRetry = {}) }
+    RunwayTheme { HomeScreen(UiState.Error(AppError.Network), actions = HomeActions(), onRetry = {}) }
 }

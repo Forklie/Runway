@@ -2,7 +2,6 @@ package com.example.runway.ui.feature.home
 
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
-import com.example.runway.core.network.ConnectivityObserver
 import com.example.runway.domain.usecase.HomeSummary
 import com.example.runway.domain.usecase.ObserveHomeSummary
 import com.example.runway.testutil.MainDispatcherRule
@@ -13,9 +12,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -25,15 +22,9 @@ class HomeViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val observeHome = mockk<ObserveHomeSummary>()
-    private val connectivity = mockk<ConnectivityObserver>()
     private val summary = previewHomeSummary()
 
-    @Before
-    fun setUp() {
-        every { connectivity.isOnline } returns flowOf(true)
-    }
-
-    private fun viewModel() = HomeViewModel(observeHome, connectivity)
+    private fun viewModel() = HomeViewModel(observeHome)
 
     /** Skips Loading values. */
     private suspend fun ReceiveTurbine<UiState<HomeSummary>>.awaitResolved(): UiState<HomeSummary> {
@@ -69,17 +60,6 @@ class HomeViewModelTest {
             assertTrue(awaitResolved() is UiState.Error)
             vm.retry()
             assertEquals(UiState.Success(summary), awaitResolved())
-        }
-    }
-
-    @Test
-    fun `offline drives the saved-on-this-phone chip`() = runTest {
-        every { observeHome() } returns flowOf(summary)
-        every { connectivity.isOnline } returns flowOf(false)
-        viewModel().isOnline.test {
-            var online = awaitItem()
-            if (online) online = awaitItem() // the initial optimistic value
-            assertFalse(online)
         }
     }
 }

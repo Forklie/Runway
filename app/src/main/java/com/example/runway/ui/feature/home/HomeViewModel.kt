@@ -2,7 +2,6 @@ package com.example.runway.ui.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.runway.core.network.ConnectivityObserver
 import com.example.runway.core.result.toAppError
 import com.example.runway.domain.usecase.HomeSummary
 import com.example.runway.domain.usecase.ObserveHomeSummary
@@ -23,12 +22,12 @@ import kotlinx.coroutines.flow.update
 /**
  * Maps the live Home summary to UiState. No formulas here: they live in ObserveHomeSummary.
  * WhileSubscribed(5_000) detaches the Firestore listeners 5 seconds after Home leaves the screen.
+ * The "Saved on this phone" chip is the shell's (RunwayShell), shown on every screen.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     observeHome: ObserveHomeSummary,
-    connectivity: ConnectivityObserver,
 ) : ViewModel() {
 
     private val retryTick = MutableStateFlow(0)
@@ -41,10 +40,6 @@ class HomeViewModel @Inject constructor(
                 .catch { emit(UiState.Error(it.toAppError())) }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), UiState.Loading)
-
-    /** Drives the "Saved on this phone" chip. Starts as online so the chip never flashes on open. */
-    val isOnline: StateFlow<Boolean> = connectivity.isOnline
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
 
     /** "Try again" on the error state: restarts every listener. */
     fun retry() {

@@ -16,7 +16,6 @@ import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.CloudOff
 import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Speed
@@ -98,7 +97,7 @@ private const val TOP_CATEGORIES = 5
 
 /** Safe to Spend today (FR-13), the screen's one loud thing. Negative never shows: the pill says it. */
 @Composable
-internal fun SafeToSpendHero(summary: HomeSummary, online: Boolean, onSettings: (() -> Unit)?) {
+internal fun SafeToSpendHero(summary: HomeSummary, onSettings: (() -> Unit)?) {
     val c = RunwayTheme.colors
     val perDay = summary.safeToSpend.perDay.coerceAtLeast(0L)
     val monthEnd = summary.today.withDayOfMonth(summary.today.lengthOfMonth())
@@ -115,7 +114,6 @@ internal fun SafeToSpendHero(summary: HomeSummary, online: Boolean, onSettings: 
                 Text(greeting, style = RunwayType.title2, color = c.onBrand, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(summary.today.weekdayLabel(), style = RunwayType.caption, color = c.onBrandMuted)
             }
-            if (!online) OfflineChip()
             if (onSettings != null) HeroIconButton(Icons.Rounded.Settings, stringResource(R.string.home_settings), onSettings)
         },
         pill = { PacePill(summary) },
@@ -132,20 +130,6 @@ internal fun SafeToSpendHero(summary: HomeSummary, online: Boolean, onSettings: 
             modifier = Modifier.padding(vertical = Spacing.s1),
         )
         Text(stringResource(R.string.home_safe_context, monthEnd.dayMonthLabel()), style = RunwayType.bodySm, color = c.onBrandMuted)
-    }
-}
-
-/** "Saved on this phone": offline is normal, writes still land locally (NFR-03). */
-@Composable
-private fun OfflineChip() {
-    val c = RunwayTheme.colors
-    Row(
-        modifier = Modifier.height(28.dp).background(c.onBrandSoft, CircleShape).padding(horizontal = Spacing.s3),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.s1),
-    ) {
-        Icon(Icons.Rounded.CloudOff, contentDescription = null, modifier = Modifier.size(16.dp), tint = c.onBrand)
-        Text(stringResource(R.string.offline_chip), style = RunwayType.caption, color = c.onBrand, maxLines = 1)
     }
 }
 

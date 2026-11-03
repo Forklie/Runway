@@ -22,11 +22,13 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.runway.ui.feature.auth.LoginDest
 import com.example.runway.ui.feature.auth.authDestinations
+import com.example.runway.ui.feature.onboarding.OnboardingDest
+import com.example.runway.ui.feature.session.RouteGroup
 import com.example.runway.ui.feature.session.SessionProblemScreen
 import com.example.runway.ui.feature.session.SessionState
 import com.example.runway.ui.feature.session.SessionViewModel
+import com.example.runway.ui.feature.session.routeGroupOf
 import com.example.runway.ui.feature.session.startDestination
 import com.example.runway.ui.theme.RunwayTheme
 
@@ -51,13 +53,13 @@ fun RunwayShell(sessionViewModel: SessionViewModel = hiltViewModel()) {
         if (firstRoute == null) firstRoute = session.startDestination()
     }
 
-    // After the first route, a changed session moves the user: sign-in leaves Login, sign-out leaves the app.
+    // After the first route, a changed session moves the user between the three groups (auth,
+    // onboarding, main): sign-in leaves Login, finishing onboarding leaves it for Home, sign-out leaves the app.
     LaunchedEffect(session, firstRoute) {
         val target = session.startDestination() ?: return@LaunchedEffect
         if (firstRoute == null) return@LaunchedEffect
         val current = navController.currentDestination ?: return@LaunchedEffect
-        val shouldBeOnAuth = target == LoginDest
-        if (shouldBeOnAuth != current.isAuthRoute()) {
+        if (routeGroupOf(target) != current.routeGroup()) {
             navController.navigate(target) {
                 popUpTo(navController.graph.id) { inclusive = true }
                 launchSingleTop = true
@@ -105,6 +107,12 @@ fun RunwayShell(sessionViewModel: SessionViewModel = hiltViewModel()) {
 
 private fun NavDestination?.isAuthRoute(): Boolean =
     authDestinations.any { isRouteInHierarchy(it) }
+
+private fun NavDestination?.routeGroup(): RouteGroup = when {
+    isAuthRoute() -> RouteGroup.Auth
+    isRouteInHierarchy(OnboardingDest::class) -> RouteGroup.Onboarding
+    else -> RouteGroup.Main
+}
 
 fun NavController.navigateTopLevel(route: Any) {
     navigate(route) {

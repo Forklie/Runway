@@ -10,7 +10,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
 /**
- * Member A's repository bindings (added by C as A's buddy, see docs/DECISIONS.md).
+ * Member A's repository bindings (see docs/DECISIONS.md).
  * TransactionRepository is bound in RepositoryModuleB, which added it first for GenerateRecurring:
  * binding it here too would be a duplicate binding.
  */

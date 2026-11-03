@@ -3,8 +3,8 @@ package com.example.runway.domain.model
 import java.time.Instant
 
 /**
- * users/{uid}/transactions/{id} (Doc 2 section 5.5, section 6.2). Contract owned by A; completed by C as A's buddy so
- * Home, Goal and Check-in can read live data. All sums and formulas use [amountLkrMinor] (BR-04).
+ * users/{uid}/transactions/{id} (Doc 2 section 5.5, section 6.2). Contract owned by Member A. Home, Goal and Check-in
+ * read it for live data. All sums and formulas use [amountLkrMinor] (BR-04).
  * [recurringId] comes last with a default, so code that builds a transaction without it still compiles.
  */
 data class Transaction(

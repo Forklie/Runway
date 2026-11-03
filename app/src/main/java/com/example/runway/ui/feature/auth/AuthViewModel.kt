@@ -104,8 +104,32 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // ---- Google sign-in (F-18). The Android part lives in GoogleSignInHelper: the ViewModel only sees the token. ----
+
+    /** The button was tapped. Locks the screen while Google's sheet is open. False if already busy (a double tap). */
+    fun onGoogleStarted(): Boolean {
+        if (_state.value.submitting) return false
+        _state.update { it.copy(submitting = true, formError = null, googleUnavailable = false) }
+        return true
+    }
+
+    /** Hands the Google token to Firebase. ensureProfile() creates the profile on a first Google sign-in. */
+    fun onGoogleToken(idToken: String) {
+        submit { authRepository.signInWithGoogle(idToken) }
+    }
+
+    /** The person closed the sheet: unlock quietly, nothing to say. */
+    fun onGoogleCancelled() {
+        _state.update { it.copy(submitting = false) }
+    }
+
+    /** The sheet could not open: unlock and point to email sign-in instead. */
+    fun onGoogleUnavailable() {
+        _state.update { it.copy(submitting = false, googleUnavailable = true) }
+    }
+
     private fun submit(call: suspend () -> AppResult<*>) {
-        _state.update { it.copy(submitting = true, formError = null) }
+        _state.update { it.copy(submitting = true, formError = null, googleUnavailable = false) }
         viewModelScope.launch {
             when (val result = call()) {
                 // Stay "busy": the screen is about to be replaced when the session changes.

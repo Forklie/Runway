@@ -1,6 +1,7 @@
 package com.example.runway.ui.feature.auth
 
 import androidx.lifecycle.SavedStateHandle
+import com.example.runway.R
 import com.example.runway.core.result.AppError
 import com.example.runway.core.result.AppResult
 import com.example.runway.domain.model.AuthUser
@@ -216,6 +217,79 @@ class AuthViewModelTest {
 
         assertFalse(vm.state.value.resetRequested)
         assertEquals(AppError.Network, vm.state.value.formError)
+    }
+
+    // ---- Google sign-in (F-18) ----
+
+    @Test
+    fun `tapping Google locks the screen and clears an old error`() {
+        val vm = viewModel()
+        assertTrue(vm.onGoogleStarted())
+        assertTrue(vm.state.value.submitting)
+        assertNull(vm.state.value.formError)
+    }
+
+    @Test
+    fun `a second tap while Google is open is ignored`() {
+        val vm = viewModel()
+        assertTrue(vm.onGoogleStarted())
+        assertFalse(vm.onGoogleStarted())
+    }
+
+    @Test
+    fun `a Google token is sent to the repository once`() {
+        coEvery { repository.signInWithGoogle("token-123") } returns AppResult.Success(user)
+        val vm = viewModel()
+        vm.onGoogleStarted()
+        vm.onGoogleToken("token-123")
+
+        coVerify(exactly = 1) { repository.signInWithGoogle("token-123") }
+        assertTrue(vm.state.value.submitting) // stays busy: the session is about to change
+    }
+
+    @Test
+    fun `a failed Google sign-in shows the error and unlocks`() {
+        coEvery { repository.signInWithGoogle(any()) } returns AppResult.Failure(AppError.Network)
+        val vm = viewModel()
+        vm.onGoogleStarted()
+        vm.onGoogleToken("token-123")
+
+        assertFalse(vm.state.value.submitting)
+        assertEquals(AppError.Network, vm.state.value.formError)
+    }
+
+    @Test
+    fun `closing the Google sheet unlocks quietly`() {
+        val vm = viewModel()
+        vm.onGoogleStarted()
+        vm.onGoogleCancelled()
+
+        assertFalse(vm.state.value.submitting)
+        assertNull(vm.state.value.formError)
+        assertFalse(vm.state.value.googleUnavailable)
+        assertNull(vm.state.value.bannerErrorRes())
+    }
+
+    @Test
+    fun `Google not available shows its own message and keeps email sign-in usable`() {
+        val vm = viewModel()
+        vm.onEmailChange("kavindu@example.com")
+        vm.onGoogleStarted()
+        vm.onGoogleUnavailable()
+
+        assertFalse(vm.state.value.submitting)
+        assertTrue(vm.state.value.googleUnavailable)
+        assertEquals(R.string.auth_google_unavailable, vm.state.value.bannerErrorRes())
+        assertEquals("kavindu@example.com", vm.state.value.email) // input kept
+    }
+
+    @Test
+    fun `trying Google again clears the unavailable message`() {
+        val vm = viewModel()
+        vm.onGoogleStarted()
+        vm.onGoogleUnavailable()
+        vm.onGoogleStarted()
+        assertFalse(vm.state.value.googleUnavailable)
     }
 
     // ---- process death ----

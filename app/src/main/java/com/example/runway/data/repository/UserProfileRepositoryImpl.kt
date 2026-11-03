@@ -46,6 +46,9 @@ class UserProfileRepositoryImpl @Inject constructor(
         doc().set(profile.toDto(), SetOptions.merge()).logWriteFailure("profile save")
     }
 
+    override suspend fun setDisplayName(name: String): AppResult<Unit> =
+        merge("displayName" to name)
+
     override suspend fun setOnboardingComplete(complete: Boolean): AppResult<Unit> =
         merge("onboardingComplete" to complete)
 

@@ -10,6 +10,7 @@ interface UserProfileRepository {
     fun observeProfile(): Flow<UserProfile?>
 
     suspend fun save(profile: UserProfile): AppResult<Unit>
+    suspend fun setDisplayName(name: String): AppResult<Unit>
     suspend fun setOnboardingComplete(complete: Boolean): AppResult<Unit>
     suspend fun setPyfPercent(percent: Double): AppResult<Unit>
     suspend fun setDefaultAccount(accountId: String?): AppResult<Unit>

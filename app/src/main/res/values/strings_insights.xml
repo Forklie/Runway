@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="insights_title">Insights</string>
+
+    <!-- Income reality (F-12, BR-44) -->
+    <string name="reality_title">Income reality</string>
+    <string name="reality_tag_full">Last 3 months</string>
+    <string name="reality_tag_one">Based on 1 month</string>
+    <string name="reality_tag_partial">Based on %1$d months</string>
+    <string name="reality_range">%1$s to %2$s</string>
+    <string name="reality_other">Other income</string>
+    <string name="reality_total">Total a month</string>
+    <string name="reality_estimate">Your estimate</string>
+    <string name="reality_estimate_above">Your estimate is %1$s a month above what arrived.</string>
+    <string name="reality_estimate_below">What arrived is %1$s a month above your estimate.</string>
+    <string name="reality_estimate_match">What arrived matches your estimate.</string>
+    <string name="reality_footer">Safe to Spend only counts salary. Freelance and AdSense count once they arrive.</string>
+    <string name="reality_empty">Income reality appears after your first full month of logged income.</string>
+    <string name="reality_how">For each source: the average, lowest and highest month over the last 3 complete months, not counting this one. Months with no income logged at all are left out.</string>
+
+    <!-- Balances (F-13) -->
+    <string name="balances_title">Balances</string>
+    <string name="balances_checked_today">Checked today</string>
+    <string name="balances_checked_yesterday">Checked yesterday</string>
+    <string name="balances_checked_days">Checked %1$d days ago</string>
+    <string name="balances_never">Not checked yet</string>
+    <string name="balances_clarity">Clarity this month: %1$d%%</string>
+    <string name="balances_how">Each balance = the last balance you checked + money in − money out since then. Nothing is stored as a running total, so nothing drifts.</string>
+    <string name="balances_checkin">Start check-in</string>
+
+    <!-- Crypto (F-17) -->
+    <string name="crypto_card_title">Crypto</string>
+    <string name="crypto_net">Net position</string>
+    <string name="crypto_breakdown">In %1$s · Out %2$s · Holdings %3$s</string>
+    <string name="crypto_no_snapshot">Add what your holdings are worth now to see a true net position.</string>
+    <string name="crypto_card_empty">Log what you put in and take out. We keep a running net position, separate from your spending.</string>
+    <string name="crypto_kept_out">Kept out of Safe to Spend.</string>
+    <string name="crypto_open">Open ledger</string>
+    <string name="crypto_how">Net position = money taken out + latest holdings value − money put in.</string>
+</resources>

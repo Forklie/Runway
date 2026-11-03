@@ -9,6 +9,7 @@ import com.example.runway.R
 import com.example.runway.ui.feature.auth.authScreens
 import com.example.runway.ui.feature.goal.goalScreens
 import com.example.runway.ui.feature.home.homeScreens
+import com.example.runway.ui.feature.insights.insightsScreens
 import com.example.runway.ui.feature.onboarding.onboardingScreens
 import com.example.runway.ui.feature.settings.settingsScreens
 import com.example.runway.ui.feature.subscriptions.subscriptionsScreens
@@ -42,6 +43,6 @@ fun AppNavHost(
         // C: replace with homeScreens, goalScreens and insightsScreens
         homeScreens(navController)
         goalScreens(navController)
-        composable<InsightsDest> { PlaceholderScreen(R.string.nav_insights) }
+        insightsScreens(navController)
     }
 }

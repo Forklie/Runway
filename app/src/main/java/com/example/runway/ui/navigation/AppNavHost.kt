@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.runway.R
 import com.example.runway.ui.feature.auth.authScreens
+import com.example.runway.ui.feature.home.homeScreens
 import com.example.runway.ui.feature.onboarding.onboardingScreens
 import com.example.runway.ui.feature.settings.settingsScreens
 import com.example.runway.ui.feature.subscriptions.subscriptionsScreens
@@ -38,7 +39,7 @@ fun AppNavHost(
         composable<ActivityDest> { PlaceholderScreen(R.string.nav_activity) }
 
         // C: replace with homeScreens, goalScreens and insightsScreens
-        composable<HomeDest> { PlaceholderScreen(R.string.nav_home) }
+        homeScreens(navController)
         composable<GoalDest> { PlaceholderScreen(R.string.nav_goal) }
         composable<InsightsDest> { PlaceholderScreen(R.string.nav_insights) }
     }

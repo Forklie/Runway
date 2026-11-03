@@ -60,6 +60,9 @@ fun RunwayShell(
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
 
+    // Recurring items that fell due become transactions, once each time the session becomes Ready (F-19).
+    LaunchedEffect(session) { shellViewModel.onSessionChanged(session) }
+
     // Offline chip (FR-04) and the app-wide snackbar for writes the server refused (NFR-03).
     val isOnline by shellViewModel.isOnline.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }

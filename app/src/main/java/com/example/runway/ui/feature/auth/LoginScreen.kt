@@ -34,6 +34,7 @@ fun LoginRoute(
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val onGoogle = rememberGoogleSignIn(viewModel)
     LoginScreen(
         state = state,
         onEmailChange = viewModel::onEmailChange,
@@ -41,6 +42,7 @@ fun LoginRoute(
         onSignIn = viewModel::onSignIn,
         onForgotPassword = onForgotPassword,
         onCreateAccount = onCreateAccount,
+        onGoogle = onGoogle,
     )
 }
 
@@ -53,6 +55,7 @@ fun LoginScreen(
     onSignIn: () -> Unit,
     onForgotPassword: () -> Unit,
     onCreateAccount: () -> Unit,
+    onGoogle: () -> Unit = {},
 ) {
     val focus = LocalFocusManager.current
     AuthScaffold(
@@ -66,6 +69,14 @@ fun LoginScreen(
         onPrimary = onSignIn,
         submitting = state.submitting,
         footer = {
+            RunwayButton(
+                text = stringResource(R.string.auth_google_action),
+                onClick = onGoogle,
+                style = ButtonStyle.Secondary,
+                size = ButtonSize.Large,
+                fillWidth = true,
+                enabled = !state.submitting,
+            )
             RunwayButton(
                 text = stringResource(R.string.auth_login_to_register),
                 onClick = onCreateAccount,

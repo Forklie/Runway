@@ -34,6 +34,7 @@ fun RegisterRoute(
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val onGoogle = rememberGoogleSignIn(viewModel)
     RegisterScreen(
         state = state,
         onNameChange = viewModel::onNameChange,
@@ -42,6 +43,7 @@ fun RegisterRoute(
         onRegister = viewModel::onRegister,
         onBack = onBack,
         onHaveAccount = onHaveAccount,
+        onGoogle = onGoogle,
     )
 }
 
@@ -54,6 +56,7 @@ fun RegisterScreen(
     onRegister: () -> Unit,
     onBack: () -> Unit,
     onHaveAccount: () -> Unit,
+    onGoogle: () -> Unit = {},
 ) {
     val focus = LocalFocusManager.current
     AuthScaffold(
@@ -68,6 +71,14 @@ fun RegisterScreen(
         submitting = state.submitting,
         onBack = onBack,
         footer = {
+            RunwayButton(
+                text = stringResource(R.string.auth_google_action),
+                onClick = onGoogle,
+                style = ButtonStyle.Secondary,
+                size = ButtonSize.Large,
+                fillWidth = true,
+                enabled = !state.submitting,
+            )
             RunwayButton(
                 text = stringResource(R.string.auth_register_to_login),
                 onClick = onHaveAccount,

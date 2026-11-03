@@ -21,6 +21,8 @@ data class AuthFormState(
     val submitting: Boolean = false,
     /** Reset screen: the request was made. The message is neutral on purpose. */
     val resetRequested: Boolean = false,
+    /** Google sign-in could not start (no Google account, no Play services, setup problem). Not an error from Firebase. */
+    val googleUnavailable: Boolean = false,
 )
 
 // ---- AppError / issue -> string. The only place auth text is chosen. ----
@@ -53,4 +55,8 @@ fun AuthFormState.passwordErrorRes(): Int? =
 /** Everything else (wrong password, offline, unknown) goes in the banner above the button. */
 @StringRes
 fun AuthFormState.bannerErrorRes(): Int? =
-    formError?.takeUnless { it == AppError.EmailInUse || it == AppError.WeakPassword }?.messageRes()
+    if (googleUnavailable) {
+        R.string.auth_google_unavailable
+    } else {
+        formError?.takeUnless { it == AppError.EmailInUse || it == AppError.WeakPassword }?.messageRes()
+    }

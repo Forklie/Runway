@@ -80,12 +80,17 @@ data class SettingsActions(
     val onDefaultAccountSelected: (String) -> Unit = {},
     val onPyfChange: (String) -> Unit = {},
     val onSavePyf: () -> Unit = {},
+    val onOpenSubscriptions: () -> Unit = {},
     val onSignOut: () -> Unit = {},
 )
 
 /** Stateful wrapper: the only part that touches Hilt. */
 @Composable
-fun SettingsRoute(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
+fun SettingsRoute(
+    onBack: () -> Unit,
+    onOpenSubscriptions: () -> Unit,
+    viewModel: SettingsViewModel = hiltViewModel(),
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val form by viewModel.form.collectAsStateWithLifecycle()
     SettingsScreen(
@@ -104,6 +109,7 @@ fun SettingsRoute(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMod
             onDefaultAccountSelected = viewModel::onDefaultAccountSelected,
             onPyfChange = viewModel::onPyfChange,
             onSavePyf = viewModel::onSavePyf,
+            onOpenSubscriptions = onOpenSubscriptions,
             onSignOut = viewModel::onSignOut,
         ),
     )
@@ -243,6 +249,15 @@ private fun SettingsContentView(content: SettingsContent, form: SettingsForm, ac
                 onClick = actions.onSavePyf,
                 style = ButtonStyle.Tonal,
                 enabled = form.pyfDraft != null,
+            )
+        }
+
+        // Subscription audit (F-16)
+        Section(R.string.settings_subscriptions_heading, helper = R.string.settings_subscriptions_helper) {
+            RunwayButton(
+                text = stringResource(R.string.settings_subscriptions_open),
+                onClick = actions.onOpenSubscriptions,
+                style = ButtonStyle.Secondary,
             )
         }
 

@@ -20,14 +20,12 @@ import com.example.runway.domain.repository.UserProfileRepository
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.util.Optional
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 /** Everything the Home, Goal, Insights and Check-in formulas read, as one consistent snapshot. */
@@ -59,7 +57,7 @@ class ObserveLedger @Inject constructor(
     private val categories: CategoryRepository,
     private val transactions: TransactionRepository,
     private val checkins: BalanceCheckinRepository,
-    private val recurring: Optional<RecurringRepository>,
+    private val recurring: RecurringRepository,
     private val time: TimeProvider,
 ) {
     operator fun invoke(): Flow<Ledger> {
@@ -69,7 +67,7 @@ class ObserveLedger @Inject constructor(
             .map { windowStart(it, today, time.zone) }
             .distinctUntilChanged()
             .flatMapLatest { transactions.observeSince(it) }
-        val planned = if (recurring.isPresent) recurring.get().observeAll() else flowOf(emptyList())
+        val planned = recurring.observeAll() // B's rent, bills and subscriptions: planned committed costs
 
         val setup = combine(
             profiles.observeProfile(),

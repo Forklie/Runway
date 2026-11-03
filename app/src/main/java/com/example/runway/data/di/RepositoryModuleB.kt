@@ -5,12 +5,14 @@ import com.example.runway.data.repository.AuthRepositoryImpl
 import com.example.runway.data.repository.GoalSettingsRepositoryImpl
 import com.example.runway.data.repository.OnboardingRepositoryImpl
 import com.example.runway.data.repository.RecurringRepositoryImpl
+import com.example.runway.data.repository.TransactionRepositoryImpl
 import com.example.runway.data.repository.UserProfileRepositoryImpl
 import com.example.runway.domain.repository.AccountRepository
 import com.example.runway.domain.repository.AuthRepository
 import com.example.runway.domain.repository.GoalSettingsRepository
 import com.example.runway.domain.repository.OnboardingRepository
 import com.example.runway.domain.repository.RecurringRepository
+import com.example.runway.domain.repository.TransactionRepository
 import com.example.runway.domain.repository.UserProfileRepository
 import dagger.Binds
 import dagger.Module
@@ -39,4 +41,7 @@ abstract class RepositoryModuleB {
 
     @Binds
     abstract fun goalSettingsRepository(impl: GoalSettingsRepositoryImpl): GoalSettingsRepository
+
+    @Binds
+    abstract fun transactionRepository(impl: TransactionRepositoryImpl): TransactionRepository
 }

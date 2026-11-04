@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.runway.R
 import com.example.runway.ui.feature.auth.authScreens
 import com.example.runway.ui.feature.checkin.checkinScreens
+import com.example.runway.ui.feature.crypto.cryptoScreens
 import com.example.runway.ui.feature.goal.goalScreens
 import com.example.runway.ui.feature.home.homeScreens
 import com.example.runway.ui.feature.insights.insightsScreens
@@ -46,5 +47,6 @@ fun AppNavHost(
         goalScreens(navController)
         insightsScreens(navController)
         checkinScreens(navController)
+        cryptoScreens(navController)
     }
 }

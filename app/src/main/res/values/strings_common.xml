@@ -15,7 +15,6 @@
     <string name="offline_title">Saved on this phone</string>
     <string name="offline_body">Everything syncs with your account when you\'re back online.</string>
     <string name="error_title">We couldn\'t load this</string>
-    <string name="placeholder_body">This screen is on its way.</string>
     <string name="write_rejected_message">One change couldn\'t be saved to your account. Everything else is safe. Check it and try again.</string>
 
     <!-- Word-chip lockups -->
@@ -23,8 +22,6 @@
     <string name="lockup_on_this_phone">on this phone</string>
     <string name="lockup_that">that</string>
     <string name="lockup_didnt_load">didn\'t load</string>
-    <string name="lockup_coming">coming</string>
-    <string name="lockup_soon">soon</string>
 
     <!-- Field and error messages (one per AppError) -->
     <string name="amount_error_invalid">Enter an amount above 0.</string>

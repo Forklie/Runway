@@ -73,6 +73,19 @@ class AddTransactionTest {
     }
 
     @Test
+    fun `USD with no rate is rejected, it never saves as 1 USD = 1 LKR (BR-03)`() = runTest {
+        val noRate = TransactionDraft(
+            id = "adsense-oct",
+            type = TransactionType.INCOME,
+            amountMinor = 12_000L,
+            currency = CurrencyCode.USD,
+            date = now,
+        )
+        assertEquals(AppResult.Failure(AppError.Validation("fxRate", "out of range")), addTransaction(noRate))
+        coVerify(exactly = 0) { repository.add(any()) }
+    }
+
+    @Test
     fun `monthKey follows Colombo time, not UTC (BR-20)`() = runTest {
         addTransaction(expense().copy(date = Instant.parse("2026-10-31T19:00:00Z")))
         assertEquals("2026-11", written.captured.monthKey)

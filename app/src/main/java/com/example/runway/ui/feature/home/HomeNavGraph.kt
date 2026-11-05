@@ -10,6 +10,7 @@ import com.example.runway.ui.feature.activity.TransferDest
 import com.example.runway.ui.feature.checkin.openCheckin
 import com.example.runway.ui.feature.quickadd.QuickAddViewModel
 import com.example.runway.ui.feature.settings.SettingsDest
+import com.example.runway.ui.feature.income.LogIncomeDest
 import com.example.runway.ui.navigation.ActivityDest
 import com.example.runway.ui.navigation.GoalDest
 import com.example.runway.ui.navigation.HomeDest
@@ -29,6 +30,7 @@ fun NavGraphBuilder.homeScreens(nav: NavController) {
                 onOpenGoal = { nav.navigateTopLevel(GoalDest) },
                 onSeeActivity = { nav.navigateTopLevel(ActivityDest) },
                 onCheckin = { nav.openCheckin() },
+                onIncome = { nav.navigate(LogIncomeDest) { launchSingleTop = true } },
                 onTransfer = { nav.navigate(TransferDest) { launchSingleTop = true } },
                 onSettings = { nav.navigate(SettingsDest) { launchSingleTop = true } },
             ),

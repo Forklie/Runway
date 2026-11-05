@@ -28,6 +28,8 @@ android {
 
     buildTypes {
         release {
+            // ponytail: debug key so a sideloaded release installs; add an upload key before any Play release.
+            signingConfig = signingConfigs.getByName("debug")
             optimization {
                 enable = false
             }

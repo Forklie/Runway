@@ -54,6 +54,33 @@ gradlew.bat assembleDebug
 
 With the same wrapper, `installDebug` builds and installs it on a connected device or emulator, and `testDebugUnitTest` runs the unit tests.
 
+## Install on a phone
+
+Build the release APK on any computer with the same wrapper and `assembleRelease`:
+
+```bash
+./gradlew assembleRelease
+```
+
+Copy `app/build/outputs/apk/release/app-release.apk` to the phone, open it, and allow installs from that app if asked. Use this file, not an older `app-release-unsigned.apk`, because Android rejects unsigned APKs.
+
+Release builds are signed with the computer's debug key, so they are for sideloading and not for Google Play.
+
+### "App not installed"
+
+Android blocks an update signed with a different key from the installed copy, and each computer has its own debug key. So this error usually means Runway is already on the phone from another computer.
+
+Uninstall Runway, including from any other profile or Secure Folder, then install the new APK. Uninstalling removes anything not yet synced to Firestore.
+
+To stop this happening, use one key everywhere. Copy `debug.keystore` from one computer to the others, replacing the file there:
+
+- **macOS and Linux:** `~/.android/debug.keystore`
+- **Windows:** `%USERPROFILE%\.android\debug.keystore`
+
+### Google Sign-In on a new computer
+
+Google Sign-In only works for keys registered in Firebase. Run the wrapper with `signingReport`, and if the SHA-1 for the `debug` variant is new, add it to the Android app in the Firebase console and replace `app/google-services.json` with the new download. A copied key that is already registered needs neither step.
+
 ## Architecture
 
 MVVM, single activity, Kotlin and Jetpack Compose only.

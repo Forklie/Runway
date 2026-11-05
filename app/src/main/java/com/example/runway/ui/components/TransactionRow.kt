@@ -67,7 +67,7 @@ fun TransactionRow(
             Text(subtitle, style = RunwayType.bodySm, color = c.inkMuted, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         Column(horizontalAlignment = Alignment.End) {
-            MoneyText(amountMinor = amountMinor, kind = kind)
+            MoneyText(amountMinor = amountMinor, kind = kind, cents = amountMinor % 100 != 0L) // BR-08
             if (caption != null) Text(caption, style = RunwayType.caption, color = c.inkMuted)
         }
     }

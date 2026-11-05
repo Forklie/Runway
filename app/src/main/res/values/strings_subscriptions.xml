@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="subscriptions_title">Subscriptions</string>
+    <string name="subscriptions_back">Back</string>
+
+    <!-- Summary -->
+    <string name="subscriptions_summary_monthly">You pay %1$s a month</string>
+    <string name="subscriptions_summary_yearly">That\'s %1$s a year</string>
+
+    <!-- Active rows -->
+    <string name="subscriptions_active_heading">Worth keeping?</string>
+    <string name="subscriptions_row_cost">%1$s a month · %2$s a year</string>
+    <string name="subscriptions_cost_unknown">Needs an exchange rate to show in LKR</string>
+    <string name="subscriptions_prompt">Still using this?</string>
+    <string name="subscriptions_yes">Yes, keep it</string>
+    <string name="subscriptions_no">No, cancel it</string>
+    <string name="subscriptions_keeping">Keeping this one.</string>
+    <string name="subscriptions_cancel_instead">Cancel it instead</string>
+
+    <!-- Cancelled rows -->
+    <string name="subscriptions_cancelled_heading">Marked as cancelled</string>
+    <string name="subscriptions_saved_total">You\'d save %1$s a year</string>
+    <string name="subscriptions_cancelled_row">You\'d save %1$s a year. Remember to cancel it with the provider too.</string>
+    <string name="subscriptions_undo">Undo</string>
+
+    <!-- Empty -->
+    <string name="subscriptions_lockup_no">no</string>
+    <string name="subscriptions_lockup_subs">subscriptions</string>
+    <string name="subscriptions_empty_title">Nothing to review yet</string>
+    <string name="subscriptions_empty_body">When you add subscriptions, they show up here so you can decide which ones are worth keeping.</string>
+</resources>

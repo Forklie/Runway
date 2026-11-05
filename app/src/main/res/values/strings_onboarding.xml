@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared by the five steps -->
+    <string name="onboarding_back">Back</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_skip">Skip for now</string>
+    <string name="onboarding_finish">Let\'s go</string>
+    <string name="onboarding_step_counter">Step %1$d of %2$d</string>
+
+    <!-- Word-chip lockups -->
+    <string name="onboarding_lockup_your">your</string>
+    <string name="onboarding_lockup_goal">goal</string>
+    <string name="onboarding_lockup_income">income</string>
+    <string name="onboarding_lockup_where">where</string>
+    <string name="onboarding_lockup_it_sits">it sits</string>
+    <string name="onboarding_lockup_fixed">fixed</string>
+    <string name="onboarding_lockup_costs">costs</string>
+    <string name="onboarding_lockup_day">day</string>
+    <string name="onboarding_lockup_zero">zero</string>
+
+    <!-- Field messages (inline, under the field) -->
+    <string name="onboarding_error_goal_name">Give your goal a name.</string>
+    <string name="onboarding_error_amount">Enter a number with up to 2 decimals.</string>
+    <string name="onboarding_error_pay_day">Pick a day from 1 to 31.</string>
+
+    <!-- 1 Goal -->
+    <string name="onboarding_goal_title">What are you saving for?</string>
+    <string name="onboarding_goal_subtitle">Pick one goal. Everything in Runway is measured against it.</string>
+    <string name="onboarding_goal_name_label">Goal name</string>
+    <string name="onboarding_goal_name_placeholder">e.g. MacBook</string>
+    <string name="onboarding_goal_target_label">How much do you need?</string>
+    <string name="onboarding_goal_months_label">How long do you want to take?</string>
+    <string name="onboarding_months_chip">%1$d months</string>
+
+    <!-- 2 Income -->
+    <string name="onboarding_income_title">Where does your money come from?</string>
+    <string name="onboarding_income_subtitle">Skip anything you\'re not sure about. You can add it later.</string>
+    <string name="onboarding_salary_label">Base salary each month</string>
+    <string name="onboarding_salary_helper">Use the lowest amount you can count on. Anything above it counts as a bonus.</string>
+    <string name="onboarding_pay_day_label">Pay day</string>
+    <string name="onboarding_pay_day_helper">The day of the month it arrives.</string>
+    <string name="onboarding_estimate_label">What do you think you earn in a typical month?</string>
+    <string name="onboarding_estimate_helper">Just your own guess. We\'ll compare it with what actually arrives.</string>
+    <string name="onboarding_sources_label">Money that comes in sometimes</string>
+    <string name="onboarding_sources_helper">Counted only once it arrives.</string>
+    <string name="onboarding_source_freelance">Freelance</string>
+    <string name="onboarding_source_adsense">AdSense</string>
+    <string name="onboarding_source_crypto">Crypto</string>
+    <string name="onboarding_source_other">Other</string>
+
+    <!-- 3 Accounts -->
+    <string name="onboarding_accounts_title">What\'s in your accounts today?</string>
+    <string name="onboarding_accounts_subtitle">These are your starting balances. Rough is fine.</string>
+    <string name="onboarding_bank_label">Main bank account</string>
+    <string name="onboarding_cash_label">Cash in hand</string>
+    <string name="onboarding_goal_fund_label">Already saved for your goal</string>
+    <string name="onboarding_goal_fund_helper">This is your goal fund. It counts as saved so far.</string>
+
+    <!-- 4 Committed costs -->
+    <string name="onboarding_committed_title">What leaves every month, whatever your mood?</string>
+    <string name="onboarding_committed_subtitle">Rent, bills and subscriptions. These are your fixed costs.</string>
+    <string name="onboarding_rent_label">Rent</string>
+    <string name="onboarding_utilities_label">Utilities</string>
+    <string name="onboarding_gym_label">Gym</string>
+    <string name="onboarding_subscriptions_label">Subscriptions</string>
+    <string name="onboarding_subscriptions_helper">All of them added up. You can go through them one by one later.</string>
+
+    <!-- 5 Day-zero preview -->
+    <string name="onboarding_preview_title">Your day-zero plan</string>
+    <string name="onboarding_preview_subtitle">Before you log a single expense, here\'s what your goal asks for.</string>
+    <string name="onboarding_preview_per_month">a month for %1$d months</string>
+    <string name="onboarding_preview_done">You\'ve already saved enough for this goal.</string>
+    <string name="onboarding_preview_share">That\'s about %1$d%% of your base salary.</string>
+    <string name="onboarding_preview_after_rent">After rent, you have %1$s left each month.</string>
+    <string name="onboarding_preview_after_goal">After rent and your goal, %1$s is left for everything else.</string>
+    <string name="onboarding_preview_estimate_above">You think you earn about %1$s more than your base salary. Runway plans on the base and counts the rest when it arrives.</string>
+    <string name="onboarding_preview_estimate_even">Your estimate matches your base salary, so there are no surprises.</string>
+    <string name="onboarding_preview_no_salary">Add your base salary later to see how much of it your goal takes.</string>
+    <string name="onboarding_preview_fits">This fits inside your base salary.</string>
+    <string name="onboarding_preview_stretch">This is more than your base salary covers right now. A longer timeline makes it lighter, and you can change it any time in Settings.</string>
+</resources>

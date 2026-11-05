@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Goal runway: shared by the Home goal card and the Goal screen -->
+    <string name="goal_percent">%1$d%%</string>
+    <string name="goal_saved_of">of %1$s</string>
+    <string name="goal_track_end">%1$d%% · %2$s</string>
+    <string name="goal_track_description">%1$s of %2$s rupees saved, %3$d percent. Planned for %4$s.</string>
+
+    <!-- One projection sentence. The "after your plan" phrase gets the coral squiggle. -->
+    <string name="goal_line_reached">You\'ve saved the full amount. It\'s yours when you\'re ready.</string>
+    <string name="goal_line_not_enough_data">Your pace shows after 14 days. Until then, %1$s a month gets you there by %2$s.</string>
+    <string name="goal_line_no_landing">At this pace the goal won\'t be reached. %1$s a month gets you there by %2$s.</string>
+    <string name="goal_line_landing">At your pace you land in %1$s, %2$s.</string>
+    <string name="goal_after_plan_one">a month after your plan</string>
+    <string name="goal_after_plan_many">%1$d months after your plan</string>
+    <string name="goal_before_plan_one">a month before your plan</string>
+    <string name="goal_before_plan_many">%1$d months before your plan</string>
+    <string name="goal_on_plan">right on plan</string>
+
+    <!-- Goal screen: hero panel -->
+    <string name="goal_title">Goal</string>
+    <string name="goal_edit">Edit goal</string>
+    <string name="goal_hero_of">of %1$s saved · %2$d%%</string>
+    <string name="goal_hero_spoken">%1$s of %2$s rupees saved toward %3$s</string>
+    <string name="goal_pill_landing">Lands %1$s at your pace</string>
+    <string name="goal_pill_not_enough">Pace shows after 14 days</string>
+    <string name="goal_pill_needs">Needs %1$s a month</string>
+    <string name="goal_pill_reached">Goal reached</string>
+    <string name="goal_add_to_fund">Add to fund</string>
+    <string name="goal_what_if">What if…</string>
+
+    <!-- Pace card -->
+    <string name="goal_pace_title">Your pace</string>
+    <string name="goal_status_ahead">Ahead of pace</string>
+    <string name="goal_status_on_track">On pace</string>
+    <string name="goal_status_behind">Behind pace</string>
+    <string name="goal_status_not_enough">Not enough data yet</string>
+    <string name="goal_status_reached">Reached</string>
+    <string name="goal_needed_label">Needed each month</string>
+    <string name="goal_pace_label">Your pace</string>
+    <string name="goal_pace_value">%1$s a month</string>
+    <string name="goal_pace_unknown">After 14 days</string>
+    <string name="goal_months_left_label">Months left</string>
+    <string name="goal_pace_how">Needed each month = (target %1$s − saved %2$s) ÷ %3$d months left. Your pace is the average monthly change of your goal fund over the last 30 to 90 days, once it has 14 days of history.</string>
+
+    <!-- What if (BR-75) -->
+    <string name="whatif_eyebrow">What if you buy it?</string>
+    <string name="whatif_goal_tag">Goal</string>
+    <string name="whatif_delay_one">This moves your %1$s back about a day.</string>
+    <string name="whatif_delay_many">This moves your %1$s back about %2$d days.</string>
+    <string name="whatif_phrase_one">about a day</string>
+    <string name="whatif_phrase_many">about %1$d days</string>
+    <string name="whatif_no_effect">Your goal is already reached, so this doesn\'t move it.</string>
+    <string name="whatif_how">Days = price ÷ (your pace ÷ 30). Until there is a pace, the amount needed each month is used instead.</string>
+    <string name="whatif_not_now">Not now</string>
+    <string name="whatif_sheet_title">What if you buy it?</string>
+    <string name="whatif_sheet_body">We\'ll show how far it moves your goal date. Nothing is saved.</string>
+    <string name="whatif_label">What is it?</string>
+    <string name="whatif_label_placeholder">Headphones</string>
+    <string name="whatif_price">Price</string>
+    <string name="whatif_submit">See the effect</string>
+
+    <!-- Add to fund -->
+    <string name="fund_sheet_title">Add to your goal fund</string>
+    <string name="fund_sheet_body">Moves money from one of your accounts into %1$s. It counts as saved straight away.</string>
+    <string name="fund_amount">Amount</string>
+    <string name="fund_from">From</string>
+    <string name="fund_submit">Add to fund</string>
+    <string name="fund_added">Added %1$s to %2$s</string>
+    <string name="fund_undo">Undo</string>
+    <string name="fund_error_account">Choose where the money comes from.</string>
+
+    <!-- No goal yet -->
+    <string name="goal_empty_title">Your goal goes here</string>
+    <string name="goal_empty_body">Set what you\'re saving for and by when. We\'ll work out the monthly pace and show when you land.</string>
+    <string name="goal_empty_action">Set your goal</string>
+    <string name="lockup_set_a">set a</string>
+    <string name="lockup_goal">goal</string>
+
+    <!-- Goal form -->
+    <string name="goal_form_title_new">Set your goal</string>
+    <string name="goal_form_title_edit">Edit your goal</string>
+    <string name="goal_form_name">What are you saving for?</string>
+    <string name="goal_form_name_placeholder">MacBook Pro M4</string>
+    <string name="goal_form_name_error">Give your goal a name.</string>
+    <string name="goal_form_target">Target</string>
+    <string name="goal_form_when">By when</string>
+    <string name="goal_form_months">%1$d months</string>
+    <string name="goal_form_lands">Lands by %1$s</string>
+    <string name="goal_form_keep">Keeps your current date, %1$s</string>
+    <string name="goal_form_save">Save goal</string>
+</resources>

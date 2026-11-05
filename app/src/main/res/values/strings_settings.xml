@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_save">Save</string>
+
+    <!-- Profile -->
+    <string name="settings_profile_heading">Profile</string>
+    <string name="settings_name_label">What should we call you?</string>
+    <string name="settings_name_error">Add a name so we can say hi.</string>
+
+    <!-- Goal -->
+    <string name="settings_goal_heading">Your goal</string>
+    <string name="settings_goal_none">Your goal appears here once you set it up.</string>
+    <string name="settings_goal_deadline">By %1$s</string>
+    <string name="settings_goal_edit">Edit goal</string>
+    <string name="settings_goal_sheet_title">Edit your goal</string>
+    <string name="settings_goal_name_label">Goal name</string>
+    <string name="settings_goal_target_label">How much do you need?</string>
+    <string name="settings_goal_months_label">Move the deadline to</string>
+    <string name="settings_goal_months_helper">Counted from today. Leave it alone to keep your current deadline.</string>
+    <string name="settings_goal_months_chip">%1$d months</string>
+
+    <!-- Default account -->
+    <string name="settings_account_heading">Default account</string>
+    <string name="settings_account_helper">New entries start from this account.</string>
+
+    <!-- Pay Yourself First -->
+    <string name="settings_pyf_heading">Pay Yourself First</string>
+    <string name="settings_pyf_label">Share of each salary sent to your goal, in percent</string>
+    <string name="settings_pyf_helper">When you log your salary, this share is proposed as a transfer to your goal fund.</string>
+    <string name="settings_pyf_error">Enter a number from 0 to 100.</string>
+
+    <!-- Subscriptions -->
+    <string name="settings_subscriptions_heading">Subscriptions</string>
+    <string name="settings_subscriptions_helper">See what each one costs a month and a year, and decide which are worth keeping.</string>
+    <string name="settings_subscriptions_open">Review subscriptions</string>
+
+    <!-- Sign out -->
+    <string name="settings_sign_out">Sign out</string>
+</resources>

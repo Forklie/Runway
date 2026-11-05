@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+
+    function validTx(d) {
+      return d.keys().hasAll(['type','amountMinor','currency','fxRate','amountLkrMinor',
+                              'date','monthKey','archived','createdAt','updatedAt'])
+        && d.keys().hasOnly(['type','amountMinor','currency','fxRate','amountLkrMinor',
+                             'categoryId','accountId','toAccountId','incomeSourceId',
+                             'relatedTxId','recurringId','note','date','monthKey',
+                             'archived','createdAt','updatedAt'])
+        && d.type in ['EXPENSE','INCOME','TRANSFER','REFUND']
+        && d.amountMinor is int && d.amountMinor > 0 && d.amountMinor <= 10000000000
+        && d.amountLkrMinor is int && d.amountLkrMinor > 0 && d.amountLkrMinor <= 10000000000
+        && d.currency in ['LKR','USD']
+        && d.fxRate is number && d.fxRate > 0
+        && d.date is timestamp && d.createdAt is timestamp && d.updatedAt is timestamp
+        && d.monthKey is string && d.monthKey.size() == 7
+        && d.archived is bool
+        && (!('note' in d) || (d.note is string && d.note.size() <= 200));
+    }
+
+    function txImmutableOk() {
+      return request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.fxRate == resource.data.fxRate
+          && request.resource.data.currency == resource.data.currency
+          && request.resource.data.type == resource.data.type;
+    }
+
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+
+      match /transactions/{id} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid) && validTx(request.resource.data);
+        allow update: if isOwner(uid) && validTx(request.resource.data) && txImmutableOk();
+        allow delete: if false;                    // history is archived, never deleted
+      }
+
+      match /goals/{id} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.targetMinor is int
+          && request.resource.data.targetMinor > 0;
+        allow delete: if isOwner(uid);
+      }
+
+      match /accounts/{id}          { allow read, write: if isOwner(uid); }
+      match /categories/{id}        { allow read, write: if isOwner(uid); }
+      match /incomeSources/{id}     { allow read, write: if isOwner(uid); }
+      match /freelanceProjects/{id} { allow read, write: if isOwner(uid); }
+      match /milestones/{id}        { allow read, write: if isOwner(uid); }
+      match /balanceCheckins/{id}   { allow read, write: if isOwner(uid); }
+      match /recurringItems/{id}    { allow read, write: if isOwner(uid); }
+      match /cryptoEntries/{id}     { allow read, write: if isOwner(uid); }
+    }
+    // Everything else is denied by default.
+  }
+}

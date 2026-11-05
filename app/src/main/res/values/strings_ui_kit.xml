@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared by the design-system components in ui/components (owner C) -->
+    <string name="ui_back">Back</string>
+    <string name="ui_close">Close</string>
+    <string name="ui_how_it_works">How we worked this out</string>
+    <string name="ui_currency_lkr">LKR</string>
+
+    <!-- List row captions (design system, List row) -->
+    <string name="tx_caption_transfer">Transfer</string>
+    <string name="tx_caption_refund">Refund</string>
+</resources>

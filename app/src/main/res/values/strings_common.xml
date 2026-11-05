@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_activity">Activity</string>
+    <string name="nav_goal">Goal</string>
+    <string name="nav_insights">Insights</string>
+    <string name="quick_add_description">Quick add expense</string>
+
+    <!-- States -->
+    <string name="action_retry">Try again</string>
+    <string name="common_loading">Loading</string>
+    <string name="state_saving">Saving</string>
+    <string name="offline_chip">Saved on this phone</string>
+    <string name="offline_title">Saved on this phone</string>
+    <string name="offline_body">Everything syncs with your account when you\'re back online.</string>
+    <string name="error_title">We couldn\'t load this</string>
+    <string name="write_rejected_message">One change couldn\'t be saved to your account. Everything else is safe. Check it and try again.</string>
+
+    <!-- Word-chip lockups -->
+    <string name="lockup_saved">saved</string>
+    <string name="lockup_on_this_phone">on this phone</string>
+    <string name="lockup_that">that</string>
+    <string name="lockup_didnt_load">didn\'t load</string>
+
+    <!-- Field and error messages (one per AppError) -->
+    <string name="amount_error_invalid">Enter an amount above 0.</string>
+    <string name="error_network">You\'re offline. Check your connection and try again.</string>
+    <string name="error_permission_denied">Sign in again to continue.</string>
+    <string name="error_not_found">We couldn\'t find that.</string>
+    <string name="error_invalid_credentials">That email or password doesn\'t look right. Check them and try again.</string>
+    <string name="error_email_in_use">An account with this email already exists. Try signing in instead.</string>
+    <string name="error_weak_password">Use a password with at least 6 characters.</string>
+    <string name="error_validation">Check the highlighted field.</string>
+    <string name="error_unknown">Something went wrong on our side. Try again in a moment.</string>
+</resources>

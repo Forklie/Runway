@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,8 +30,11 @@ import com.example.runway.R
 import com.example.runway.core.event.AppEvent
 import com.example.runway.core.event.AppEvents
 import com.example.runway.ui.components.OfflineChip
+import com.example.runway.ui.components.RunwaySnackbarHost
 import com.example.runway.ui.feature.auth.authDestinations
 import com.example.runway.ui.feature.onboarding.OnboardingDest
+import com.example.runway.ui.feature.quickadd.QuickAddHost
+import com.example.runway.ui.feature.quickadd.QuickAddViewModel
 import com.example.runway.ui.feature.session.RouteGroup
 import com.example.runway.ui.feature.session.SessionProblemScreen
 import com.example.runway.ui.feature.session.SessionState
@@ -53,6 +55,7 @@ import com.example.runway.ui.theme.Spacing
 fun RunwayShell(
     sessionViewModel: SessionViewModel = hiltViewModel(),
     shellViewModel: ShellViewModel = hiltViewModel(),
+    quickAddViewModel: QuickAddViewModel = hiltViewModel(),
 ) {
     val colors = RunwayTheme.colors
     val session by sessionViewModel.state.collectAsStateWithLifecycle()
@@ -102,13 +105,13 @@ fun RunwayShell(
         Scaffold(
             containerColor = colors.bg,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            snackbarHost = { SnackbarHost(snackbarHostState) },
+            snackbarHost = { RunwaySnackbarHost(snackbarHostState) },
             bottomBar = {
                 if (showBottomBar) {
                     BottomBar(
                         currentDestination = currentDestination,
                         onNavigate = { navController.navigateTopLevel(it.route) },
-                        onQuickAdd = { /* A: navController.navigate(QuickAddDest) */ },
+                        onQuickAdd = quickAddViewModel::onOpen,
                     )
                 }
             },
@@ -126,6 +129,8 @@ fun RunwayShell(
                 )
             }
         }
+
+        QuickAddHost(quickAddViewModel, snackbarHostState, visible = showBottomBar)
 
         // Saved on this phone: shown on every screen except sign-in while there is no network.
         if (!isOnline && !currentDestination.isAuthRoute()) {

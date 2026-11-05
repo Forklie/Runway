@@ -1,0 +1,3 @@
+# The wrapper scripts break with the wrong line endings, whatever the cloner's autocrlf setting.
+gradlew text eol=lf
+*.bat   text eol=crlf

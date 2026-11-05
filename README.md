@@ -32,7 +32,7 @@ To use your own project:
    firebase deploy --only firestore:rules,firestore:indexes
    ```
 
-## Build
+## Build the APK
 
 **Android Studio (any system):** open the project folder, let Gradle sync, and run the `app` configuration. Android Studio brings its own JDK and installs any missing SDK components.
 
@@ -50,9 +50,9 @@ Windows:
 gradlew.bat assembleDebug
 ```
 
-The APK is at `app/build/outputs/apk/debug/app-debug.apk`. Min SDK 26, target SDK 36.
+`assembleDebug` builds the debug APK at `app/build/outputs/apk/debug/app-debug.apk`. It connects to the live Firebase project. Min SDK 26, target SDK 36.
 
-Unit tests use the same wrapper with `testDebugUnitTest` in place of `assembleDebug`.
+With the same wrapper, `installDebug` builds and installs it on a connected device or emulator, and `testDebugUnitTest` runs the unit tests.
 
 ## Architecture
 

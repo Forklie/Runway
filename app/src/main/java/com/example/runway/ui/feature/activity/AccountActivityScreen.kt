@@ -59,16 +59,16 @@ import kotlin.math.absoluteValue
 @Composable
 fun AccountActivityRoute(onBack: () -> Unit, viewModel: AccountActivityViewModel = hiltViewModel()) {
     val context = LocalContext.current
-    var granted by remember { mutableStateOf(context.hasReadSms()) }
+    var granted by remember { mutableStateOf(context.hasSmsAccess()) }
     val activity = LocalActivity.current
     var blocked by rememberSaveable { mutableStateOf(false) }
-    val request = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-        granted = it
+    val request = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+        granted = context.hasSmsAccess()
         // After a second refusal Android stops asking, so only settings can change it
-        blocked = !it && activity?.shouldShowRequestPermissionRationale(Manifest.permission.READ_SMS) == false
+        blocked = !granted && activity?.shouldShowRequestPermissionRationale(Manifest.permission.READ_SMS) == false
     }
     // The answer may change in system settings while the user is away
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { granted = context.hasReadSms() }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { granted = context.hasSmsAccess() }
 
     Column(Modifier.fillMaxSize().background(RunwayTheme.colors.bg)) {
         SmallTopBar(stringResource(R.string.account_activity_title), onBack)
@@ -81,15 +81,24 @@ fun AccountActivityRoute(onBack: () -> Unit, viewModel: AccountActivityViewModel
             SmsPermissionPrompt(
                 blocked = blocked,
                 onAllow = {
-                    if (blocked) context.openAppSettings() else request.launch(Manifest.permission.READ_SMS)
+                    if (blocked) context.openAppSettings() else request.launch(ASKED_PERMISSIONS)
                 },
             )
         }
     }
 }
 
-private fun Context.hasReadSms(): Boolean =
-    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
+// Notifications are asked for too, but the screen works without them
+private val ASKED_PERMISSIONS = arrayOf(
+    Manifest.permission.READ_SMS,
+    Manifest.permission.RECEIVE_SMS,
+    Manifest.permission.POST_NOTIFICATIONS,
+)
+
+private fun Context.hasSmsAccess(): Boolean =
+    listOf(Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS).all {
+        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+    }
 
 private fun Context.openAppSettings() {
     startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null)))

@@ -222,4 +222,21 @@ class QuickAddViewModelTest {
         every { categories.observeCategories() } returns kotlinx.coroutines.flow.flow { throw IllegalStateException("signed out") }
         assertTrue(loaded().options.value is UiState.Error)
     }
+
+    @Test
+    fun `importing a bank SMS opens the sheet with the amount and saves nothing`() {
+        val vm = viewModel()
+        vm.onImport("1650.00")
+        assertEquals("1650.00", vm.form.value.amount)
+        assertTrue(vm.form.value.open)
+        assertFalse(vm.form.value.canSave) // still needs a category
+    }
+
+    @Test
+    fun `an invalid import amount is ignored`() {
+        val vm = viewModel()
+        listOf("", "abc", "-5", "0").forEach(vm::onImport)
+        assertFalse(vm.form.value.open)
+        assertEquals("", vm.form.value.amount)
+    }
 }

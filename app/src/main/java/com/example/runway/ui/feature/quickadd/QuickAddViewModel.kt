@@ -127,6 +127,13 @@ class QuickAddViewModel @Inject constructor(
         updateForm { it.copy(open = true) }
     }
 
+    /** A bank SMS the user chose to add. The amount came through an exported activity, so check it. */
+    fun onImport(amount: String) {
+        if (MoneyParser.parseToMinor(amount) == null) return
+        onOpen()
+        updateForm { it.copy(amount = amount) }
+    }
+
     fun onDismiss() = updateForm { QuickAddForm() }
 
     fun onAmountChange(value: String) = updateForm { it.copy(amount = value) }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -58,7 +59,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 @Composable
-fun ActivityRoute(onOpen: (String) -> Unit, viewModel: ActivityViewModel = hiltViewModel()) {
+fun ActivityRoute(onOpen: (String) -> Unit, onAccountActivity: () -> Unit, viewModel: ActivityViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val month by viewModel.month.collectAsStateWithLifecycle()
     ActivityScreen(
@@ -69,6 +70,7 @@ fun ActivityRoute(onOpen: (String) -> Unit, viewModel: ActivityViewModel = hiltV
         onNextMonth = viewModel::onNextMonth,
         onCategorySelected = viewModel::onCategorySelected,
         onOpen = onOpen,
+        onAccountActivity = onAccountActivity,
         onRetry = viewModel::retry,
     )
 }
@@ -83,10 +85,15 @@ fun ActivityScreen(
     onNextMonth: () -> Unit,
     onCategorySelected: (String?) -> Unit,
     onOpen: (String) -> Unit,
+    onAccountActivity: () -> Unit,
     onRetry: () -> Unit,
 ) {
     Column(Modifier.fillMaxSize().background(RunwayTheme.colors.bg)) {
-        LargeTitle(stringResource(R.string.activity_title))
+        LargeTitle(stringResource(R.string.activity_title)) {
+            IconButton(onClick = onAccountActivity) {
+                Icon(Icons.Rounded.AccountBalance, stringResource(R.string.account_activity_title), tint = RunwayTheme.colors.ink)
+            }
+        }
         MonthSwitcher(month, canGoNext, onPreviousMonth, onNextMonth)
         Box(Modifier.weight(1f)) {
             when (state) {
@@ -106,7 +113,7 @@ fun ActivityScreen(
 }
 
 @Composable
-private fun MonthSwitcher(month: String, canGoNext: Boolean, onPrevious: () -> Unit, onNext: () -> Unit) {
+internal fun MonthSwitcher(month: String, canGoNext: Boolean, onPrevious: () -> Unit, onNext: () -> Unit) {
     val c = RunwayTheme.colors
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.s2),
@@ -196,11 +203,11 @@ private fun previewContent(): ActivityContent {
 @Preview(showBackground = true, heightDp = 600)
 @Composable
 private fun ActivityPreview() {
-    RunwayTheme { ActivityScreen(UiState.Success(previewContent()), "2026-11", false, {}, {}, {}, {}, {}) }
+    RunwayTheme { ActivityScreen(UiState.Success(previewContent()), "2026-11", false, {}, {}, {}, {}, {}, {}) }
 }
 
 @Preview(showBackground = true, heightDp = 600)
 @Composable
 private fun ActivityEmptyPreview() {
-    RunwayTheme { ActivityScreen(UiState.Empty, "2026-10", true, {}, {}, {}, {}, {}) }
+    RunwayTheme { ActivityScreen(UiState.Empty, "2026-10", true, {}, {}, {}, {}, {}, {}) }
 }

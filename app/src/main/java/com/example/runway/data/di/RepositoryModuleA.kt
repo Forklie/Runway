@@ -1,8 +1,10 @@
 package com.example.runway.data.di
 
+import com.example.runway.data.repository.BankSmsRepositoryImpl
 import com.example.runway.data.repository.CategoryRepositoryImpl
 import com.example.runway.data.repository.FreelanceRepositoryImpl
 import com.example.runway.data.repository.IncomeSourceRepositoryImpl
+import com.example.runway.domain.repository.BankSmsRepository
 import com.example.runway.domain.repository.CategoryRepository
 import com.example.runway.domain.repository.FreelanceRepository
 import com.example.runway.domain.repository.IncomeSourceRepository
@@ -28,4 +30,7 @@ abstract class RepositoryModuleA {
 
     @Binds
     abstract fun freelanceRepository(impl: FreelanceRepositoryImpl): FreelanceRepository
+
+    @Binds
+    abstract fun bankSmsRepository(impl: BankSmsRepositoryImpl): BankSmsRepository
 }

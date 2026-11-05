@@ -9,16 +9,23 @@ import kotlinx.serialization.Serializable
 // Feature-internal routes. Detail and Transfer are flow screens, so the bottom bar hides.
 @Serializable data class TransactionDetailDest(val id: String)
 @Serializable data object TransferDest
+@Serializable data object AccountActivityDest
 
 /** Activity tab, one transaction's detail, and Transfer. AppNavHost calls this in one line. */
 fun NavGraphBuilder.activityScreens(nav: NavController) {
     composable<ActivityDest> {
-        ActivityRoute(onOpen = { nav.navigate(TransactionDetailDest(it)) { launchSingleTop = true } })
+        ActivityRoute(
+            onOpen = { nav.navigate(TransactionDetailDest(it)) { launchSingleTop = true } },
+            onAccountActivity = { nav.navigate(AccountActivityDest) { launchSingleTop = true } },
+        )
     }
     composable<TransactionDetailDest> {
         TransactionDetailRoute(onDone = { nav.popBackStack() })
     }
     composable<TransferDest> {
         TransferRoute(onDone = { nav.popBackStack() })
+    }
+    composable<AccountActivityDest> {
+        AccountActivityRoute(onBack = { nav.popBackStack() })
     }
 }

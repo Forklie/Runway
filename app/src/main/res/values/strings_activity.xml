@@ -24,6 +24,31 @@
     <string name="activity_refund_error">Enter an amount from 0.01 to %1$s.</string>
     <string name="activity_refund_save">Save refund</string>
 
+    <string name="account_activity_title">Account activity</string>
+    <string name="account_activity_permission_title">See how your account moves</string>
+    <string name="account_activity_permission_body">Runway can read Sampath Bank\'s transaction messages to measure money in and out. Only messages from Sampath Bank are read. They stay on this phone and never change your totals.</string>
+    <string name="account_activity_allow">Allow SMS access</string>
+    <string name="account_activity_open_settings">Open settings</string>
+    <string name="account_activity_empty_title">No Sampath messages this month</string>
+    <string name="account_activity_empty_body">Debits and credits show up here once Sampath Bank sends them. Only Sampath Bank is supported for now.</string>
+    <string name="account_activity_account">Account ending %1$s</string>
+    <string name="account_activity_in">Money in</string>
+    <string name="account_activity_out">Money out</string>
+    <string name="account_activity_net">Net</string>
+    <plurals name="account_activity_count">
+        <item quantity="one">%1$d transaction</item>
+        <item quantity="other">%1$d transactions</item>
+    </plurals>
+    <plurals name="account_activity_days">
+        <item quantity="one">%1$d active day</item>
+        <item quantity="other">%1$d active days</item>
+    </plurals>
+    <string name="account_activity_channel_card">Card</string>
+    <string name="account_activity_channel_atm">ATM</string>
+    <string name="account_activity_channel_online">Online</string>
+    <string name="account_activity_channel_other">Other</string>
+    <string name="account_activity_note">From Sampath Bank messages on this phone. Separate from what you log in Runway, so your totals don\'t change. A message that never arrived can\'t be counted.</string>
+
     <string name="transfer_title">Transfer</string>
     <string name="transfer_from">From</string>
     <string name="transfer_to">To</string>

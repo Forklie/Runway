@@ -47,11 +47,14 @@
     <string name="account_activity_channel_atm">ATM</string>
     <string name="account_activity_channel_online">Online</string>
     <string name="account_activity_channel_other">Other</string>
+    <string name="account_activity_to_add">Not in Runway yet</string>
+    <string name="account_activity_add_spoken">Add %1$s from %2$s</string>
     <string name="account_activity_note">From Sampath Bank messages on this phone. Separate from what you log in Runway, so these numbers change your totals only when you add a debit yourself. A message that never arrived can\'t be counted.</string>
 
     <string name="bank_sms_channel">Bank transactions</string>
     <string name="bank_sms_title">Add %1$s?</string>
     <string name="bank_sms_add">Add</string>
+    <string name="bank_sms_body_at">%1$s, from account ending %2$s. Tap to add it.</string>
     <string name="bank_sms_body">Spent from account ending %1$s. Tap to add it.</string>
 
     <string name="transfer_title">Transfer</string>

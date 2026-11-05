@@ -3,6 +3,8 @@ package com.example.runway.domain.usecase
 import com.example.runway.domain.model.AccountMovement
 import com.example.runway.domain.model.MovementChannel
 import com.example.runway.domain.model.MovementDirection
+import com.example.runway.domain.model.TransactionType
+import com.example.runway.testutil.Fixtures.tx
 import java.time.Instant
 import java.time.ZoneId
 import org.junit.Assert.assertEquals
@@ -58,5 +60,18 @@ class AccountActivityTest {
     @Test
     fun `no movements means no accounts`() {
         assertTrue(summarizeAccountActivity(emptyList(), colombo).isEmpty())
+    }
+
+    @Test
+    fun `a debit with an expense of that amount logged that day is not offered`() {
+        val coffee = move("1111", MovementDirection.OUT, 50_000, "2026-11-02T04:00:00Z")
+        val lunch = move("1111", MovementDirection.OUT, 150_000, "2026-11-02T06:00:00Z")
+        val salary = move("1111", MovementDirection.IN, 50_000, "2026-11-02T07:00:00Z")
+        val sameAmountOtherDay = move("1111", MovementDirection.OUT, 50_000, "2026-11-03T04:00:00Z")
+        val logged = listOf(tx(TransactionType.EXPENSE, 50_000, Instant.parse("2026-11-02T10:00:00Z")))
+        assertEquals(
+            listOf(sameAmountOtherDay, lunch), // newest first, credits never offered
+            unloggedDebits(listOf(coffee, lunch, salary, sameAmountOtherDay), logged, colombo),
+        )
     }
 }

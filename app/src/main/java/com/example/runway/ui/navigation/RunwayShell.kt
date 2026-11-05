@@ -35,6 +35,7 @@ import com.example.runway.core.money.formatLkr
 import com.example.runway.ui.components.OfflineChip
 import com.example.runway.ui.components.RunwaySnackbarHost
 import com.example.runway.ui.components.showUndo
+import com.example.runway.ui.feature.activity.AccountActivityDest
 import com.example.runway.ui.feature.auth.authDestinations
 import com.example.runway.ui.feature.onboarding.OnboardingDest
 import com.example.runway.ui.feature.quickadd.QuickAddHost
@@ -86,7 +87,7 @@ fun RunwayShell(
                         message = context.getString(R.string.bank_sms_title, amount),
                         actionLabel = context.getString(R.string.bank_sms_add),
                     )
-                    if (result == SnackbarResult.ActionPerformed) quickAddViewModel.onImport(event.amountMinor)
+                    if (result == SnackbarResult.ActionPerformed) quickAddViewModel.onImport(event.amountMinor, event.at, event.description)
                 }
             }
         }
@@ -144,7 +145,9 @@ fun RunwayShell(
             }
         }
 
-        QuickAddHost(quickAddViewModel, snackbarHostState, visible = showBottomBar)
+        // Account activity adds past bank debits through the same sheet
+        val quickAddVisible = showBottomBar || currentDestination.isRouteInHierarchy(AccountActivityDest::class)
+        QuickAddHost(quickAddViewModel, snackbarHostState, visible = quickAddVisible)
 
         // Saved on this phone: shown on every screen except sign-in while there is no network.
         if (!isOnline && !currentDestination.isAuthRoute()) {

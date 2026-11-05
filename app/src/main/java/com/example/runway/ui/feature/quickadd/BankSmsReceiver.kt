@@ -19,9 +19,8 @@ import com.example.runway.core.money.formatLkr
 import com.example.runway.core.time.TimeProvider
 import com.example.runway.domain.model.AccountMovement
 import com.example.runway.domain.model.MovementDirection
-import com.example.runway.domain.model.Transaction
-import com.example.runway.domain.model.TransactionType
 import com.example.runway.domain.repository.TransactionRepository
+import com.example.runway.domain.usecase.hasExpenseOf
 import com.example.runway.domain.usecase.parseSampathSms
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
@@ -32,12 +31,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 
 const val EXTRA_IMPORT_MINOR = "import_minor"
+const val EXTRA_IMPORT_AT = "import_at"
+const val EXTRA_IMPORT_NOTE = "import_note"
 private const val CHANNEL_ID = "bank_sms"
 private const val LOOKUP_MILLIS = 3_000L // goAsync gets about 10 seconds. Asking twice beats never asking.
-
-// ponytail: a second purchase of the same amount on the same day isn't asked about, match on merchant if that bites
-internal fun List<Transaction>.hasExpenseOf(minor: Long): Boolean =
-    any { it.type == TransactionType.EXPENSE && it.amountLkrMinor == minor }
 
 /**
  * A Sampath debit that isn't logged yet asks to be added: in the app if it's open, otherwise as a
@@ -78,7 +75,7 @@ class BankSmsReceiver : BroadcastReceiver() {
     private fun ask(context: Context, movement: AccountMovement) {
         val state = ActivityManager.RunningAppProcessInfo().also(ActivityManager::getMyMemoryState)
         if (state.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-            AppEvents.emit(AppEvent.BankDebit(movement.amountMinor))
+            AppEvents.emit(AppEvent.BankDebit(movement.amountMinor, movement.at, movement.description))
         } else {
             notify(context, movement)
         }
@@ -96,6 +93,8 @@ class BankSmsReceiver : BroadcastReceiver() {
         val id = movement.at.toEpochMilli().toInt()
         val open = Intent(context, MainActivity::class.java)
             .putExtra(EXTRA_IMPORT_MINOR, movement.amountMinor)
+            .putExtra(EXTRA_IMPORT_AT, movement.at.toEpochMilli())
+            .putExtra(EXTRA_IMPORT_NOTE, movement.description)
             .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val amount = movement.amountMinor.formatLkr(cents = movement.amountMinor % 100 != 0L)
         manager.notify(
@@ -103,7 +102,10 @@ class BankSmsReceiver : BroadcastReceiver() {
             NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_splash)
                 .setContentTitle(context.getString(R.string.bank_sms_title, amount))
-                .setContentText(context.getString(R.string.bank_sms_body, movement.accountSuffix))
+                .setContentText(
+                    if (movement.description.isBlank()) context.getString(R.string.bank_sms_body, movement.accountSuffix)
+                    else context.getString(R.string.bank_sms_body_at, movement.description, movement.accountSuffix),
+                )
                 .setVisibility(NotificationCompat.VISIBILITY_PRIVATE) // no amounts on the lock screen
                 .setAutoCancel(true)
                 .setContentIntent(

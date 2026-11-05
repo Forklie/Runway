@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,6 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -38,7 +42,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.runway.R
+import com.example.runway.domain.model.AccountMovement
 import com.example.runway.domain.model.MovementChannel
+import com.example.runway.domain.model.MovementDirection
 import com.example.runway.domain.usecase.AccountActivity
 import com.example.runway.ui.components.CardTitle
 import com.example.runway.ui.components.EmptyState
@@ -48,17 +54,26 @@ import com.example.runway.ui.components.MoneyKind
 import com.example.runway.ui.components.MoneyText
 import com.example.runway.ui.components.RunwayCard
 import com.example.runway.ui.components.SmallTopBar
+import com.example.runway.ui.components.ButtonSize
+import com.example.runway.ui.components.ButtonStyle
+import com.example.runway.ui.components.RunwayButton
+import com.example.runway.ui.components.dayMonthLabel
+import com.example.runway.ui.components.timeLabel
 import com.example.runway.ui.feature.home.nothingYetLockup
+import com.example.runway.ui.feature.quickadd.QuickAddViewModel
 import com.example.runway.ui.state.UiState
 import com.example.runway.ui.theme.Dimens
 import com.example.runway.ui.theme.RunwayTheme
 import com.example.runway.ui.theme.RunwayType
 import com.example.runway.ui.theme.Spacing
+import java.time.Instant
+import java.time.ZoneId
 import kotlin.math.absoluteValue
 
 @Composable
 fun AccountActivityRoute(onBack: () -> Unit, viewModel: AccountActivityViewModel = hiltViewModel()) {
     val context = LocalContext.current
+    val quickAdd: QuickAddViewModel = hiltViewModel(context as ComponentActivity)
     var granted by remember { mutableStateOf(context.hasSmsAccess()) }
     val activity = LocalActivity.current
     var blocked by rememberSaveable { mutableStateOf(false) }
@@ -76,7 +91,9 @@ fun AccountActivityRoute(onBack: () -> Unit, viewModel: AccountActivityViewModel
             val state by viewModel.uiState.collectAsStateWithLifecycle()
             val month by viewModel.month.collectAsStateWithLifecycle()
             MonthSwitcher(month, viewModel.canGoNext(month), viewModel::onPreviousMonth, viewModel::onNextMonth)
-            Box(Modifier.weight(1f)) { AccountActivityBody(state, viewModel::retry) }
+            Box(Modifier.weight(1f)) {
+                AccountActivityBody(state, viewModel::retry, onAdd = { quickAdd.onImport(it.amountMinor, it.at, it.description) })
+            }
         } else {
             SmsPermissionPrompt(
                 blocked = blocked,
@@ -120,7 +137,7 @@ private fun SmsPermissionPrompt(blocked: Boolean, onAllow: () -> Unit) {
 }
 
 @Composable
-private fun AccountActivityBody(state: UiState<List<AccountActivity>>, onRetry: () -> Unit) {
+private fun AccountActivityBody(state: UiState<AccountActivityContent>, onRetry: () -> Unit, onAdd: (AccountMovement) -> Unit) {
     when (state) {
         UiState.Loading -> LoadingState()
         UiState.Empty -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -135,7 +152,9 @@ private fun AccountActivityBody(state: UiState<List<AccountActivity>>, onRetry: 
             contentPadding = PaddingValues(start = Dimens.screenMargin, end = Dimens.screenMargin, bottom = Spacing.s8),
             verticalArrangement = Arrangement.spacedBy(Spacing.s3),
         ) {
-            items(state.data, key = { it.accountSuffix }) { AccountCard(it) }
+            items(state.data.accounts, key = { it.accountSuffix }) { account ->
+                AccountCard(account, state.data.toAdd.filter { it.accountSuffix == account.accountSuffix }, state.data.zone, onAdd)
+            }
             item(key = "note") {
                 Text(
                     text = stringResource(R.string.account_activity_note),
@@ -148,7 +167,7 @@ private fun AccountActivityBody(state: UiState<List<AccountActivity>>, onRetry: 
 }
 
 @Composable
-private fun AccountCard(account: AccountActivity) {
+private fun AccountCard(account: AccountActivity, toAdd: List<AccountMovement>, zone: ZoneId, onAdd: (AccountMovement) -> Unit) {
     val c = RunwayTheme.colors
     RunwayCard {
         CardTitle(stringResource(R.string.account_activity_account, account.accountSuffix))
@@ -173,6 +192,34 @@ private fun AccountCard(account: AccountActivity) {
                 .joinToString(" · "),
             style = RunwayType.caption,
             color = c.inkMuted,
+        )
+        if (toAdd.isNotEmpty()) {
+            Text(stringResource(R.string.account_activity_to_add), style = RunwayType.label, color = c.ink)
+            toAdd.forEach { UnloggedRow(it, zone, onAdd) }
+        }
+    }
+}
+
+/** One debit not in Runway yet: what and when, the amount, and Add. */
+@Composable
+private fun UnloggedRow(movement: AccountMovement, zone: ZoneId, onAdd: (AccountMovement) -> Unit) {
+    val c = RunwayTheme.colors
+    val day = movement.at.atZone(zone).toLocalDate().dayMonthLabel()
+    val channel = stringResource(movement.channel.labelRes())
+    val title = movement.description.ifBlank { channel }
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text(title, style = RunwayType.bodySm, color = c.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text("$day · ${movement.at.timeLabel(zone)} · $channel", style = RunwayType.caption, color = c.inkMuted)
+        }
+        MoneyText(movement.amountMinor, kind = MoneyKind.Expense, cents = movement.amountMinor % 100 != 0L)
+        val spoken = stringResource(R.string.account_activity_add_spoken, title, day)
+        RunwayButton(
+            text = stringResource(R.string.bank_sms_add),
+            onClick = { onAdd(movement) },
+            style = ButtonStyle.Tertiary,
+            size = ButtonSize.Small,
+            modifier = Modifier.semantics { contentDescription = spoken },
         )
     }
 }
@@ -205,6 +252,14 @@ private fun AccountCardPreview() {
                 "1234", 8_000_000, 5_250_050, 14, 9,
                 mapOf(MovementChannel.CARD to 8, MovementChannel.ATM to 2, MovementChannel.OTHER to 4),
             ),
+            listOf(
+                AccountMovement(
+                    "1234", MovementDirection.OUT, MovementChannel.CARD, 165_000,
+                    Instant.parse("2026-11-05T08:59:00Z"), "TEST SHOP PVT",
+                ),
+            ),
+            ZoneId.of("Asia/Colombo"),
+            onAdd = {},
         )
     }
 }

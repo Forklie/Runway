@@ -1,5 +1,6 @@
 package com.example.runway.core.event
 
+import java.time.Instant
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -11,7 +12,7 @@ sealed interface AppEvent {
     data object WriteRejected : AppEvent
 
     /** A bank SMS reported a debit while the app is open. RunwayShell offers to add it. */
-    data class BankDebit(val amountMinor: Long) : AppEvent
+    data class BankDebit(val amountMinor: Long, val at: Instant, val description: String) : AppEvent
 }
 
 /**

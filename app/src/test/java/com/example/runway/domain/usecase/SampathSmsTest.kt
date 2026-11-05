@@ -21,6 +21,17 @@ class SampathSmsTest {
         assertEquals(MovementChannel.CARD, m.channel)
         assertEquals(165_000L, m.amountMinor)
         assertEquals(at, m.at)
+        assertEquals("TEST SHOP PVT", m.description) // terminal id and footer dropped
+    }
+
+    @Test
+    fun `description from each wording`() {
+        assertEquals("SALARY", parse("LKR 1.00 credited to AC **1234 for SALARY To Inq Call 0110 000000 Get protected -Do not Share OTP")!!.description)
+        assertEquals("PICKME", parse("LKR 1.00 credited to AC **1234 for PICKME - 37419306\n22/05/2026 23:36:52\nTo Inq Call 0112303050")!!.description)
+        assertEquals("TESTSTORE 12", parse("LKR 1.00 debited from AC **1234 for eCom TESTSTORE 12 - For Inq Call 0110 000000, Sampath Bank")!!.description)
+        assertEquals("TEST BRANCH", parse("LKR 1.00 debited from AC **1234 via ATM at TEST BRANCH For Inq Call 0110 000000, Sampath Bank")!!.description)
+        assertEquals("TEST SHOP", parse("Yr A/c **1234 debited Rs. 1.00 for POS TEST SHOP -For inquiries call 0110 000000, Sampath Bank")!!.description)
+        assertEquals("", parse("LKR 1.00 debited from AC **1234 - For Inq Call 0110 000000, Sampath Bank")!!.description)
     }
 
     @Test

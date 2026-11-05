@@ -34,10 +34,20 @@ fun parseSampathSms(sender: String, body: String, at: Instant): AccountMovement?
     return null
 }
 
+// Where the description ends: the bank's footer, or a date line in newer messages
+private val FOOTER = Regex("""\s*-?\s*(?:(?:For|To) Inq|For inquiries|\d{2}/\d{2}/\d{4})""", RegexOption.IGNORE_CASE)
+private val CHANNEL_WORDS = Regex("""^(?:via POS at|for POS|via ATM at|via ATM|for eCom|for|on)\s+""", RegexOption.IGNORE_CASE)
+private val TERMINAL_ID = Regex("""\s+\d{6,}$""")
+
+/** "via POS at SHOP PVT 37000000 - For Inq Call ..." -> "SHOP PVT". */
+private fun descriptionOf(rest: String): String =
+    FOOTER.split(rest.trim(), 2)[0].replace(CHANNEL_WORDS, "").replace(TERMINAL_ID, "")
+        .replace(Regex("""\s+"""), " ").trim(' ', '-')
+
 private fun movement(suffix: String, debit: Boolean, rest: String, amount: String, at: Instant): AccountMovement? {
     val minor = MoneyParser.parseToMinor(amount) ?: return null
     val direction = if (debit) MovementDirection.OUT else MovementDirection.IN
-    return AccountMovement(suffix, direction, channelOf(rest.trimStart()), minor, at)
+    return AccountMovement(suffix, direction, channelOf(rest.trimStart()), minor, at, descriptionOf(rest))
 }
 
 private fun channelOf(rest: String): MovementChannel = when {

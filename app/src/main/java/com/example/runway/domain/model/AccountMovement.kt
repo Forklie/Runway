@@ -13,4 +13,5 @@ data class AccountMovement(
     val channel: MovementChannel,
     val amountMinor: Long,
     val at: Instant,
+    val description: String = "", // merchant, payee or reason, as the bank wrote it
 )

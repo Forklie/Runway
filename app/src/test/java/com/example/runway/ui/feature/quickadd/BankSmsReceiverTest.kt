@@ -1,6 +1,7 @@
 package com.example.runway.ui.feature.quickadd
 
 import com.example.runway.domain.model.TransactionType
+import com.example.runway.domain.usecase.hasExpenseOf
 import com.example.runway.testutil.Fixtures.at
 import com.example.runway.testutil.Fixtures.tx
 import org.junit.Assert.assertFalse

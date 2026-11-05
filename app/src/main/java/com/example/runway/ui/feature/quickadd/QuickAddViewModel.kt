@@ -24,6 +24,7 @@ import com.example.runway.domain.usecase.TransactionDraft
 import com.example.runway.ui.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.math.BigDecimal
+import java.time.Instant
 import java.time.LocalDate
 import java.util.UUID
 import javax.inject.Inject
@@ -128,12 +129,18 @@ class QuickAddViewModel @Inject constructor(
         updateForm { it.copy(open = true) }
     }
 
-    /** A bank SMS the user chose to add. The amount came through an exported activity, so check it. */
-    fun onImport(minor: Long) {
+    /**
+     * A bank debit the user chose to add, on the day it happened. The values can come through an
+     * exported activity, so they are checked the same way typed input is.
+     */
+    fun onImport(minor: Long, at: Instant, note: String) {
         val amount = BigDecimal.valueOf(minor, 2).toPlainString()
         if (MoneyParser.parseToMinor(amount) == null) return
         onOpen()
-        updateForm { it.copy(amount = amount) }
+        val day = at.atZone(time.zone).toLocalDate()
+        updateForm {
+            it.copy(amount = amount, note = note.take(AddTransaction.MAX_NOTE), date = day.takeIf { d -> d < today })
+        }
     }
 
     fun onDismiss() = updateForm { QuickAddForm() }

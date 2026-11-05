@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activity_title">Activity</string>
+    <string name="activity_previous_month">Previous month</string>
+    <string name="activity_next_month">Next month</string>
+    <string name="activity_filter_all">All</string>
+    <string name="activity_empty_title">Nothing this month yet</string>
+    <string name="activity_empty_body">What you add shows up here, day by day.</string>
+
+    <string name="activity_detail_title">Edit entry</string>
+    <string name="activity_amount">Amount</string>
+    <string name="activity_rate_kept">Stays at the rate you saved: 1 %1$s = LKR %2$s</string>
+    <string name="activity_category">Category</string>
+    <string name="activity_note">Note</string>
+    <string name="activity_date">Date</string>
+    <string name="activity_save">Save</string>
+    <string name="activity_archive">Remove</string>
+    <string name="activity_archive_title">Remove this entry?</string>
+    <string name="activity_archive_body">It leaves your lists and totals. Nothing else changes.</string>
+    <string name="activity_archive_keep">Keep it</string>
+    <string name="activity_refund">Add a refund</string>
+    <string name="activity_refund_title">Money back</string>
+    <string name="activity_refund_helper">Up to %1$s, the amount you spent.</string>
+    <string name="activity_refund_error">Enter an amount from 0.01 to %1$s.</string>
+    <string name="activity_refund_save">Save refund</string>
+
+    <string name="transfer_title">Transfer</string>
+    <string name="transfer_from">From</string>
+    <string name="transfer_to">To</string>
+    <string name="transfer_helper">A transfer just moves money, so it isn\'t spending. An ATM withdrawal is your bank to Cash.</string>
+    <string name="transfer_save">Save transfer</string>
+</resources>

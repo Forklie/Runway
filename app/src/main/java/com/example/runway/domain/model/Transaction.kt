@@ -1,5 +1,6 @@
 package com.example.runway.domain.model
 
+import com.example.runway.core.money.FxMath
 import java.time.Instant
 
 /**
@@ -26,4 +27,8 @@ data class Transaction(
     val createdAt: Instant,
     val updatedAt: Instant,
     val recurringId: String? = null, // set when a recurring item generated it (BR-91)
-)
+) {
+    /** An edit keeps the rate fixed at entry (BR-05): only the LKR value follows the new amount. */
+    fun withAmount(minor: Long, now: Instant): Transaction =
+        copy(amountMinor = minor, amountLkrMinor = FxMath.toLkrMinor(minor, fxRate), updatedAt = now)
+}

@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.example.runway.R
+import com.example.runway.ui.feature.activity.activityScreens
 import com.example.runway.ui.feature.auth.authScreens
 import com.example.runway.ui.feature.checkin.checkinScreens
+import com.example.runway.ui.feature.crypto.cryptoScreens
 import com.example.runway.ui.feature.goal.goalScreens
 import com.example.runway.ui.feature.home.homeScreens
 import com.example.runway.ui.feature.income.incomeScreens
@@ -39,8 +39,8 @@ fun AppNavHost(
         settingsScreens(navController)
         subscriptionsScreens(navController)
 
-        // A: replace with activityScreens(navController). Income, Transfer and Quick Add also live here.
-        composable<ActivityDest> { PlaceholderScreen(R.string.nav_activity) }
+        // A: Freelance also lives here.
+        activityScreens(navController)
         incomeScreens(navController)
 
         // C: replace with homeScreens, goalScreens and insightsScreens
@@ -48,5 +48,6 @@ fun AppNavHost(
         goalScreens(navController)
         insightsScreens(navController)
         checkinScreens(navController)
+        cryptoScreens(navController)
     }
 }

@@ -19,7 +19,7 @@ data class TransactionDraft(
     val amountMinor: Long,
     val date: Instant,
     val currency: CurrencyCode = CurrencyCode.LKR,
-    val fxRate: Double = 1.0,
+    val fxRate: Double? = null, // required for anything but LKR: no rate must never save as 1 USD = 1 LKR
     val categoryId: String? = null,
     val accountId: String? = null,
     val toAccountId: String? = null,
@@ -51,17 +51,17 @@ class AddTransaction @Inject constructor(
     /** Pure: no write. A draft the server rules would reject fails here first, with the field to blame. */
     fun build(draft: TransactionDraft): AppResult<Transaction> {
         val fxRate = if (draft.currency == CurrencyCode.LKR) 1.0 else draft.fxRate
-        val lkr = runCatching { FxMath.toLkrMinor(draft.amountMinor, fxRate) }.getOrNull()
+        val lkr = fxRate?.let { rate -> runCatching { FxMath.toLkrMinor(draft.amountMinor, rate) }.getOrNull() }
         val problem = when {
             draft.amountMinor !in 1..MAX_MINOR -> AppError.Validation("amount", "out of range")
-            fxRate <= 0.0 || lkr == null || lkr !in 1..MAX_MINOR -> AppError.Validation("fxRate", "out of range")
+            fxRate == null || fxRate <= 0.0 || lkr == null || lkr !in 1..MAX_MINOR -> AppError.Validation("fxRate", "out of range")
             draft.note.length > MAX_NOTE -> AppError.Validation("note", "too long")
             draft.type == TransactionType.TRANSFER &&
                 (draft.accountId == null || draft.toAccountId == null || draft.accountId == draft.toAccountId) ->
                 AppError.Validation("account", "a transfer needs two different accounts")
             else -> null
         }
-        if (problem != null || lkr == null) return AppResult.Failure(problem ?: AppError.Unknown())
+        if (problem != null || lkr == null || fxRate == null) return AppResult.Failure(problem ?: AppError.Unknown())
 
         val now = time.now()
         return AppResult.Success(

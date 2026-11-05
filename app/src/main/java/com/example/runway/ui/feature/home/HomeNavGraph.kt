@@ -13,6 +13,7 @@ import com.example.runway.ui.feature.freelance.OverdueMilestonesCard
 import com.example.runway.ui.feature.freelance.openProject
 import com.example.runway.ui.feature.quickadd.QuickAddViewModel
 import com.example.runway.ui.feature.settings.SettingsDest
+import com.example.runway.ui.feature.income.LogIncomeDest
 import com.example.runway.ui.navigation.ActivityDest
 import com.example.runway.ui.navigation.GoalDest
 import com.example.runway.ui.navigation.HomeDest
@@ -33,6 +34,7 @@ fun NavGraphBuilder.homeScreens(nav: NavController) {
                 onSeeActivity = { nav.navigateTopLevel(ActivityDest) },
                 onCheckin = { nav.openCheckin() },
                 onFreelance = { nav.navigate(FreelanceDest) { launchSingleTop = true } },
+                onIncome = { nav.navigate(LogIncomeDest) { launchSingleTop = true } },
                 onTransfer = { nav.navigate(TransferDest) { launchSingleTop = true } },
                 onSettings = { nav.navigate(SettingsDest) { launchSingleTop = true } },
                 overdueCard = { OverdueMilestonesCard(onOpenProject = { nav.openProject(it) }) },

@@ -66,20 +66,49 @@ Copy `app/build/outputs/apk/release/app-release.apk` to the phone, open it, and 
 
 Release builds are signed with the computer's debug key, so they are for sideloading and not for Google Play.
 
-### "App not installed"
+## Troubleshooting
+
+### Java not found
+
+The terminal shows `JAVA_HOME is not set` or `Unable to locate a Java Runtime`.
+
+1. Install JDK 17 or newer.
+2. Set the `JAVA_HOME` environment variable to the JDK folder and open a new terminal.
+
+Building from Android Studio avoids this, because it uses its own JDK.
+
+### `SDK location not found`
+
+1. Find the Android SDK folder. Android Studio shows it under Settings, Languages & Frameworks, Android SDK.
+2. Set the `ANDROID_HOME` environment variable to that folder, or create a `local.properties` file in the project root containing `sdk.dir=<that folder>`.
+
+### `permission denied: ./gradlew`
+
+This affects clones made before the wrapper was fixed. Pull the latest `main`, or run `chmod +x gradlew`.
+
+### "App not installed" on the phone
 
 Android blocks an update signed with a different key from the installed copy, and each computer has its own debug key. So this error usually means Runway is already on the phone from another computer.
 
-Uninstall Runway, including from any other profile or Secure Folder, then install the new APK. Uninstalling removes anything not yet synced to Firestore.
+1. Uninstall Runway from the phone, including from any other profile or Secure Folder. This removes anything not yet synced to Firestore.
+2. Install the new APK.
 
-To stop this happening, use one key everywhere. Copy `debug.keystore` from one computer to the others, replacing the file there:
+To stop it happening again, use one key on every computer:
 
-- **macOS and Linux:** `~/.android/debug.keystore`
-- **Windows:** `%USERPROFILE%\.android\debug.keystore`
+1. Pick one computer and find its `debug.keystore`: `~/.android/debug.keystore` on macOS and Linux, `%USERPROFILE%\.android\debug.keystore` on Windows.
+2. Copy that file to the same location on the other computers, replacing the file there.
+3. Rebuild the APK on those computers.
 
-### Google Sign-In on a new computer
+### Google Sign-In fails
 
-Google Sign-In only works for keys registered in Firebase. Run the wrapper with `signingReport`, and if the SHA-1 for the `debug` variant is new, add it to the Android app in the Firebase console and replace `app/google-services.json` with the new download. A copied key that is already registered needs neither step.
+Google Sign-In only works for signing keys registered in the Firebase project. Email and password sign-in works with any key, so use that if you cannot change the project.
+
+1. Run the wrapper with `signingReport` and copy the `SHA1` value under `Variant: debug`.
+2. In the Firebase console, open Project settings, select the Android app, choose Add fingerprint and paste the value.
+3. Download the new `google-services.json` and replace `app/google-services.json`.
+4. Rebuild and reinstall the app.
+
+A key copied from a computer that is already registered needs none of these steps.
 
 ## Architecture
 

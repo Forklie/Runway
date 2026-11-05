@@ -226,7 +226,7 @@ class QuickAddViewModelTest {
     @Test
     fun `importing a bank SMS opens the sheet with the amount and saves nothing`() {
         val vm = viewModel()
-        vm.onImport("1650.00")
+        vm.onImport(165_000)
         assertEquals("1650.00", vm.form.value.amount)
         assertTrue(vm.form.value.open)
         assertFalse(vm.form.value.canSave) // still needs a category
@@ -235,7 +235,7 @@ class QuickAddViewModelTest {
     @Test
     fun `an invalid import amount is ignored`() {
         val vm = viewModel()
-        listOf("", "abc", "-5", "0").forEach(vm::onImport)
+        listOf(0L, -500L, Long.MAX_VALUE).forEach(vm::onImport)
         assertFalse(vm.form.value.open)
         assertEquals("", vm.form.value.amount)
     }

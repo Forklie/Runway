@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 sealed interface AppEvent {
     /** The server refused a write that was already shown as saved on this phone (for example a rules rejection). */
     data object WriteRejected : AppEvent
+
+    /** A bank SMS reported a debit while the app is open. RunwayShell offers to add it. */
+    data class BankDebit(val amountMinor: Long) : AppEvent
 }
 
 /**

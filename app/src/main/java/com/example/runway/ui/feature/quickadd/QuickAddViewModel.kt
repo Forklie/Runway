@@ -23,6 +23,7 @@ import com.example.runway.domain.usecase.suggestFavourites
 import com.example.runway.domain.usecase.TransactionDraft
 import com.example.runway.ui.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
 import javax.inject.Inject
@@ -128,7 +129,8 @@ class QuickAddViewModel @Inject constructor(
     }
 
     /** A bank SMS the user chose to add. The amount came through an exported activity, so check it. */
-    fun onImport(amount: String) {
+    fun onImport(minor: Long) {
+        val amount = BigDecimal.valueOf(minor, 2).toPlainString()
         if (MoneyParser.parseToMinor(amount) == null) return
         onOpen()
         updateForm { it.copy(amount = amount) }

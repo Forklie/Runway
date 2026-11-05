@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,8 +31,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.runway.R
 import com.example.runway.core.event.AppEvent
 import com.example.runway.core.event.AppEvents
+import com.example.runway.core.money.formatLkr
 import com.example.runway.ui.components.OfflineChip
 import com.example.runway.ui.components.RunwaySnackbarHost
+import com.example.runway.ui.components.showUndo
 import com.example.runway.ui.feature.auth.authDestinations
 import com.example.runway.ui.feature.onboarding.OnboardingDest
 import com.example.runway.ui.feature.quickadd.QuickAddHost
@@ -43,6 +47,7 @@ import com.example.runway.ui.feature.session.routeGroupOf
 import com.example.runway.ui.feature.session.startDestination
 import com.example.runway.ui.theme.RunwayTheme
 import com.example.runway.ui.theme.Spacing
+import kotlinx.coroutines.launch
 
 /**
  * Root composable. Owns the bottom bar, the bottom inset and session routing.
@@ -70,10 +75,19 @@ fun RunwayShell(
     val isOnline by shellViewModel.isOnline.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val rejectedMessage = stringResource(R.string.write_rejected_message)
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         AppEvents.events.collect { event ->
             when (event) {
                 AppEvent.WriteRejected -> snackbarHostState.showSnackbar(rejectedMessage)
+                is AppEvent.BankDebit -> launch {
+                    val amount = event.amountMinor.formatLkr(cents = event.amountMinor % 100 != 0L)
+                    val result = snackbarHostState.showUndo(
+                        message = context.getString(R.string.bank_sms_title, amount),
+                        actionLabel = context.getString(R.string.bank_sms_add),
+                    )
+                    if (result == SnackbarResult.ActionPerformed) quickAddViewModel.onImport(event.amountMinor)
+                }
             }
         }
     }

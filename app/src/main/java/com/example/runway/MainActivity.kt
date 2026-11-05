@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.runway.ui.feature.quickadd.EXTRA_IMPORT_AMOUNT
+import com.example.runway.ui.feature.quickadd.EXTRA_IMPORT_MINOR
 import com.example.runway.ui.feature.quickadd.QuickAddViewModel
 import com.example.runway.ui.feature.session.SessionState
 import com.example.runway.ui.feature.session.SessionViewModel
@@ -41,7 +41,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun importFrom(intent: Intent) {
-        intent.getStringExtra(EXTRA_IMPORT_AMOUNT)?.let(quickAddViewModel::onImport)
-        intent.removeExtra(EXTRA_IMPORT_AMOUNT) // reopening from recents must not ask again
+        if (!intent.hasExtra(EXTRA_IMPORT_MINOR)) return
+        quickAddViewModel.onImport(intent.getLongExtra(EXTRA_IMPORT_MINOR, 0))
+        intent.removeExtra(EXTRA_IMPORT_MINOR) // reopening from recents must not ask again
     }
 }

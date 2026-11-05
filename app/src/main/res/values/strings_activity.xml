@@ -51,6 +51,7 @@
 
     <string name="bank_sms_channel">Bank transactions</string>
     <string name="bank_sms_title">Add %1$s?</string>
+    <string name="bank_sms_add">Add</string>
     <string name="bank_sms_body">Spent from account ending %1$s. Tap to add it.</string>
 
     <string name="transfer_title">Transfer</string>

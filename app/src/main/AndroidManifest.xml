@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
 
     <!-- READ_SMS would otherwise hide the app from devices with no phone radio. -->
     <uses-feature android:name="android.hardware.telephony" android:required="false" />

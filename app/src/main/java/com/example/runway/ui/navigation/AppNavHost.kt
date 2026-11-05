@@ -8,6 +8,7 @@ import com.example.runway.ui.feature.activity.activityScreens
 import com.example.runway.ui.feature.auth.authScreens
 import com.example.runway.ui.feature.checkin.checkinScreens
 import com.example.runway.ui.feature.crypto.cryptoScreens
+import com.example.runway.ui.feature.freelance.freelanceScreens
 import com.example.runway.ui.feature.goal.goalScreens
 import com.example.runway.ui.feature.home.homeScreens
 import com.example.runway.ui.feature.income.incomeScreens
@@ -39,8 +40,8 @@ fun AppNavHost(
         settingsScreens(navController)
         subscriptionsScreens(navController)
 
-        // A: Freelance also lives here.
         activityScreens(navController)
+        freelanceScreens(navController)
         incomeScreens(navController)
 
         // C: replace with homeScreens, goalScreens and insightsScreens

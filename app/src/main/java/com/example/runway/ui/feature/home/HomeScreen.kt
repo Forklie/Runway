@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Work
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -29,8 +31,10 @@ import com.example.runway.R
 import com.example.runway.core.money.formatLkr
 import com.example.runway.core.result.AppError
 import com.example.runway.domain.usecase.HomeSummary
+import com.example.runway.ui.components.ButtonStyle
 import com.example.runway.ui.components.EmptyState
 import com.example.runway.ui.components.LoadingState
+import com.example.runway.ui.components.RunwayButton
 import com.example.runway.ui.components.StatusBarIconsOnBrand
 import com.example.runway.ui.components.messageRes
 import com.example.runway.ui.components.problemLockup
@@ -48,7 +52,9 @@ data class HomeActions(
     val onCheckin: (() -> Unit)? = null,
     val onIncome: (() -> Unit)? = null,
     val onTransfer: (() -> Unit)? = null,
+    val onFreelance: (() -> Unit)? = null,
     val onSettings: (() -> Unit)? = null,
+    val overdueCard: (@Composable () -> Unit)? = null, // A's overdue invoices (BR-53); draws nothing when none are overdue
 )
 
 /** Stateful wrapper: the only part that touches Hilt. */
@@ -107,11 +113,25 @@ private fun HomeContent(summary: HomeSummary, actions: HomeActions) {
         LazyColumn(state = listState, contentPadding = PaddingValues(bottom = Spacing.s16)) {
             item(key = "hero") { SafeToSpendHero(summary, actions.onSettings) }
             item(key = "actions") { ActionRow(actions) }
+            actions.onFreelance?.let { onFreelance ->
+                item(key = "freelance") {
+                    // Its own row: a fourth button in the action row cuts off "Income" and "Check in".
+                    RunwayButton(
+                        text = stringResource(R.string.freelance_title),
+                        onClick = onFreelance,
+                        modifier = Modifier.padding(horizontal = Dimens.screenMargin).padding(top = Spacing.s2),
+                        style = ButtonStyle.Tonal,
+                        fillWidth = true,
+                        leadingIcon = Icons.Rounded.Work,
+                    )
+                }
+            }
             if (prompt != null && onCheckin != null) {
                 item(key = "prompt") {
                     PromptCard(prompt, onCheckin, Modifier.padding(horizontal = Dimens.screenMargin).padding(top = Spacing.s6))
                 }
             }
+            actions.overdueCard?.let { card -> item(key = "overdue") { card() } }
             item(key = "goal") {
                 val topGap = if (prompt != null) Spacing.s3 else Spacing.s6
                 Box(Modifier.padding(horizontal = Dimens.screenMargin).padding(top = topGap)) {

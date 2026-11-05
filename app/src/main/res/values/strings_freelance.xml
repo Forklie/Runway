@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="freelance_title">Freelance</string>
+    <string name="freelance_add_project">Add project</string>
+    <string name="freelance_empty_title">No projects yet</string>
+    <string name="freelance_empty_body">Add a project to see which payment belongs to which job.</string>
+    <string name="freelance_client">Client</string>
+    <string name="freelance_project_name">Project</string>
+    <string name="freelance_total">Total for the project</string>
+    <string name="freelance_required">Add this so you can find it later.</string>
+    <string name="freelance_save">Save</string>
+    <string name="freelance_project_totals">%1$s of %2$s paid · %3$s invoiced</string>
+
+    <string name="freelance_add_milestone">Add milestone</string>
+    <string name="freelance_no_milestones_title">No milestones yet</string>
+    <string name="freelance_no_milestones_body">Split the project into the payments you expect.</string>
+    <string name="freelance_milestone_name">Milestone</string>
+    <string name="freelance_amount">Amount</string>
+    <string name="freelance_planned">Planned</string>
+    <string name="freelance_invoiced">Invoiced</string>
+    <string name="freelance_paid">Paid</string>
+    <string name="freelance_overdue">Overdue</string>
+    <string name="freelance_due">Due %1$s</string>
+    <string name="freelance_paid_on">Paid %1$s</string>
+    <string name="freelance_send_invoice">Invoice sent: pick due date</string>
+    <string name="freelance_mark_paid">Mark paid</string>
+    <string name="freelance_received">Amount received</string>
+    <string name="freelance_paid_into">Paid into</string>
+    <string name="freelance_save_paid">Save payment</string>
+
+    <string name="freelance_overdue_card">Waiting on a payment</string>
+    <string name="freelance_overdue_row">%1$s, %2$s: %3$s</string>
+    <string name="freelance_overdue_open">Open project</string>
+</resources>
